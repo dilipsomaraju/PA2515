@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<ui>
+	<!-- path:对于有图片需求的组件表示 图片路径  否则表示text   value对于需要以后调用的组件用这个value和componentList来找组件 否则表示
+	该组件调用的方法 -->
+		<frame className = "ui.ConnectFrame" path = "connect/form.jpg" title = "Connect to Server" x = "0" y = "0" w = "448" h = "347" frameStyle = "1">
+			<component className = "javax.swing.JButton" value = "connectToServer" path= "connect/button.jpg" x = "101" y = "256" w = "255" h = "35"/>
+			<component className = "javax.swing.JLabel" value = "" path= "connect/interface.png" x = "26" y = "55" w = "200" h = "50"/>
+			<component className = "javax.swing.JLabel" value = "" path= "connect/logo.png" x = "333" y = "56" w = "72" h = "31"/>
+			<component className = "javax.swing.JLabel" value = "" path= "connect/serverIP.png" x = "53" y = "139" w = "65" h = "20"/>
+			<component className = "javax.swing.JLabel" value = "" path= "connect/PortNum.png" x = "53" y = "187" w = "65" h = "20"/>
+			<component className = "javax.swing.JTextField" value = "serverIp" path= "" x = "136" y = "139" w = "247" h = "27"/>
+			<component className = "javax.swing.JTextField" value = "portNum" path= "" x = "136" y = "185" w = "247" h = "27"/>
+		</frame>
+		
+		<frame className = "ui.LoginFrame" path = "login/loginFrame.jpg" title = "Login" x = "0" y = "0" w = "540" h = "411" frameStyle = "1">
+			<component className = "javax.swing.JLabel" value = "" path= "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
+			<component className = "javax.swing.JLabel" value = "" path= "login/head.jpg" x = "56" y = "228" w = "100" h = "102"/>
+			<component className = "javax.swing.JTextField" value = "userId" path= "" x = "162" y = "235" w = "240" h = "35"/>
+			<component className = "javax.swing.JPasswordField" value = "psw" path= "" x = "162" y = "271" w = "240" h = "35"/>
+			<component className = "javax.swing.JLabel" value = "registerFrame" path= "login/registration.png" x = "402" y = "242" w = "65" h = "20"/>
+			<component className = "javax.swing.JLabel" value = "findPswFrame" path= "login/forgetPassword.png" x = "408" y = "280" w = "100" h = "20"/>
+			<component className = "javax.swing.JCheckBox" value = "saveUserName" path= "Remember userName" x = "162" y = "309" w = "150" h = "18"/>
+			<component className = "javax.swing.JCheckBox" value = "autoLogin" path= "Auto login" x = "310" y = "309" w = "100" h = "18"/>
+			<component className = "javax.swing.JButton" value = "login" path= "login/button1.jpg" x = "162" y = "338" w = "244" h = "37"/>
+		</frame>
+		
+		<frame className = "ui.RegisterFrame" path = "" title = "Register" x = "0" y = "0" w = "540" h = "411" frameStyle = "1">
+			<component className = "javax.swing.JLabel" value = "" path= "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
+		</frame>
+			<component className = "javax.swing.JLabel" value = "" path= "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
+		<frame className = "ui.MainFrame" path = "" title = "LANCHAT" x = "30" y = "30" w = "240" h = "711" frameStyle = "1">
+			<component className = "javax.swing.JLabel" value = "" path= "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
+		</frame>
+		
+		<frame className = "ui.AlterPswFrame" path = "" title = "Alter Password" x = "0" y = "0" w = "540" h = "411" frameStyle = "1">
+			<component className = "javax.swing.JLabel" value = "" path= "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
+		</frame>
+		
+		<frame className = "ui.FindPswFrame" path = "" title = "Find password" x = "0" y = "0" w = "540" h = "411" frameStyle = "1">
+			
+		</frame>
+	</ui>	
+	
+	<data >
+		<diskData className = "dao.DataDisk">
+			<param key = "path" value = "data/diskRecord.dat"/>
+		</diskData>
+	</data>
+
+</root>
