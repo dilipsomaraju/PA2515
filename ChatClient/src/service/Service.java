@@ -14,6 +14,9 @@ public interface Service {
 	
 	void login();
 	
+	/**
+	 * transfer psw to MD5 model
+	 */
 	String encryptPsw(String psw);
 	
 	void logout();

@@ -1,6 +1,8 @@
 package ui;
 
 import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -14,15 +16,13 @@ public class LoginFrame extends MyFrame{
 		this.createFrame();
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		//When DEBUG login frame using code below
-//		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-//		this.addWindowListener(new WindowAdapter() {
-//			public void windowClosing(WindowEvent e) {
-//				control.getClientService().logout();
-//				System.exit(0);
-//			}
-//		});
+		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				control.getClientService().logout();
+				System.exit(0);
+			}
+		});
 	}
 	@Override
 	public void paint(Graphics g) {

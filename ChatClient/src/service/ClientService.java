@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
@@ -39,6 +37,7 @@ public class ClientService implements Service{
 	private JCheckBox autoLogin;
 	
 	private String mode;
+	
 	
 	public ClientService(Dto dto, Control control){
 		this.dto = dto;
@@ -109,7 +108,6 @@ public class ClientService implements Service{
 			}
 		});
 	}
-	
 	@Override
 	public void connectToServer() {
 		serverIp = ((JTextField)(dto.getComponentList().get("serverIp")));
@@ -120,7 +118,7 @@ public class ClientService implements Service{
 		else if(portNum.getText().equals(""))
 			JOptionPane.showMessageDialog(null, 
 					"Please input port number", "Warming", JOptionPane.WARNING_MESSAGE);
-		//If feedback is "confirm", show LoginFrame
+		//If feedback is "CONFIRM_MSG", show LoginFrame
 		else {
 			if(dto.getSc().connectToServer(serverIp.getText(),Integer.parseInt(portNum.getText()))){
 				//Set oos & ois into dto
@@ -137,7 +135,7 @@ public class ClientService implements Service{
 		}
 	}
 	@Override
-	public void register() {
+	public synchronized void register() {
 		if(registerUserId.getText().equals(""))
 			JOptionPane.showMessageDialog(null,
 					"Please input your id", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -162,33 +160,38 @@ public class ClientService implements Service{
 		else if(answer.getText().equals(""))
 			JOptionPane.showMessageDialog(null,
 					"Please input your answer", "Warning", JOptionPane.WARNING_MESSAGE);
-		
-		else
+		else{
+			//Send register MSG
 			dto.getSc().sendMSG(new TextMSG(registerUserId.getText(),"register","",
-						new String(registerPsw.getPassword())+","+question.getText()+","+answer.getText()));
+					encryptPsw(new String(registerPsw.getPassword()))+","+question.getText()+","+answer.getText()));
+			MSG m = dto.getSc().getMSG();
+			if(m.gettOM().equals("confirm")){
+				JOptionPane.showMessageDialog(null,
+						"Successfully registered", "Information", JOptionPane.INFORMATION_MESSAGE);
+				dto.getFrameList().get("RegisterFrame").setVisible(false);
+			}
+			else JOptionPane.showMessageDialog(null,
+					m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	public void remove(){
+		registerUserId.setText("");
+		registerPsw.setText("");
+		registerConfirmPsw.setText("");
+		question.setText("");
+		answer.setText("");
 	}
 	
 	public void registerFrame() {
-		//TODO
 		dto.getFrameList().get("RegisterFrame").setVisible(true);
-		((JButton)(dto.getComponentList().get("clean"))).addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				registerUserId.setText("");
-				registerPsw.setText("");
-				registerConfirmPsw.setText("");
-				question.setText("");
-				answer.setText("");
-			}
-		});
+		
 	}
 	
 	public void alterPswFrame(){
-		//TODO
 		dto.getFrameList().get("AlterPswFrame").setVisible(true);
 	}
 
-	public void alterPsw(){
+	public synchronized void alterPsw(){
 		//TODO
 	}
 	
@@ -197,7 +200,7 @@ public class ClientService implements Service{
 		System.out.println("getQuestion");
 	}
 	
-	public void forgetPassword(){
+	public synchronized void forgetPassword(){
 		//TODO 
 		System.out.println("forgetPassword");
 	}
@@ -208,6 +211,7 @@ public class ClientService implements Service{
 					"Please input your id", "Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+		getQuestion();
 		dto.getFrameList().get("FindPswFrame").setVisible(true);
 	}
 
@@ -225,7 +229,8 @@ public class ClientService implements Service{
 		}
 			dto.getSc().sendMSG(new TextMSG(userId.getText(),
 					"login",null,encryptPsw(new String(psw.getPassword()))));
-			if(dto.getSc().getMSG().gettOM().equals("confirm")){
+			MSG m =  dto.getSc().getMSG();
+			if(m.gettOM().equals("confirm")){
 				dto.getFrameList().get("LoginFrame").setVisible(false);
 				dto.getFrameList().get("MainFrame").setVisible(true);
 				DiskData dd = new DiskData();
@@ -241,10 +246,9 @@ public class ClientService implements Service{
 				new ListenerTread();
 			}
 			else JOptionPane.showMessageDialog(null,
-					"UserName/Password not correct", "Error", JOptionPane.ERROR_MESSAGE);
+					m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
 	}
-	
-	//transfer psw to MD5 model
+
 	@Override
 	public String encryptPsw(String str) {
 		String s = null;
@@ -265,8 +269,6 @@ public class ClientService implements Service{
 		}
 		return s;
 	}
-	
-	@Override
 	public void logout() {
 		// When has Oos but user didn't logged in 
 		if(dto.getOos() != null&&dto.getUser() == null){
@@ -303,103 +305,103 @@ public class ClientService implements Service{
 	}
 
 	@Override
-	public void getFile() {
+	public synchronized void getFile() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void checkChatHistory() {
+	public synchronized void checkChatHistory() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addCategory() {
+	public synchronized void addCategory() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteCategory() {
+	public synchronized void deleteCategory() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void renameCategory() {
+	public synchronized void renameCategory() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void changeCategoryIndex() {
+	public synchronized void changeCategoryIndex() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void findById() {
+	public synchronized void findById() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addFriend() {
+	public synchronized void addFriend() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void renameFriend() {
+	public synchronized void renameFriend() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteFriend() {
+	public synchronized void deleteFriend() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void relocateFriend() {
+	public synchronized void relocateFriend() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void inviteToGroup() {
+	public synchronized void inviteToGroup() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addGroupCategory() {
+	public synchronized void addGroupCategory() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void renameGroupCategory() {
+	public synchronized void renameGroupCategory() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteGroupCategory() {
+	public synchronized void deleteGroupCategory() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void changeGroupCategoryIndex() {
+	public synchronized void changeGroupCategoryIndex() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addGroup() {
+	public synchronized void addGroup() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -411,24 +413,24 @@ public class ClientService implements Service{
 	}
 
 	@Override
-	public void relocateGroup() {
+	public synchronized void relocateGroup() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteGroup() {
+	public synchronized void deleteGroup() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void deleteGroupMember() {
+	public synchronized void deleteGroupMember() {
 		// TODO Auto-generated method stub
 		
 	}
 	private class ListenerTread extends Thread{
-		public void run(){
+		public synchronized void run(){
 			
 		}
 	}

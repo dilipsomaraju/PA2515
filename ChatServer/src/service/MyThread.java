@@ -18,22 +18,19 @@ public class MyThread extends Thread{
 	private MSG msg;
 	private TextMSG textMSG;
 	private static MSG CONFIRM_MSG;
-	private static MSG ERROR_MSG;
 	private static boolean isRun = true;
 	
 	public MyThread(Socket socket, Dto dto) {
 		this.dto = dto;
 		this.socket = socket;
 		CONFIRM_MSG = new MSG("","confirm");
-		ERROR_MSG = new MSG("","error");
 	}
 	
 	public void run(){
 		try {
 			ois = new ObjectInputStream(socket.getInputStream());
 			oos = new ObjectOutputStream(socket.getOutputStream());
-			oos.writeObject(CONFIRM_MSG);
-			oos.flush();
+			sendMSG(CONFIRM_MSG);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -50,19 +47,17 @@ public class MyThread extends Thread{
 		textMSG = (TextMSG)msg;
 		//User DB static method
 //		code like following:
-//		if(DB.CheckLogin(textMSG.getSerderId(), textMSG.getText()){
-			try {
-				oos.writeObject(CONFIRM_MSG);
-				oos.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-//			dto.getUserOutput().put(textMSG.getSenderId(), socket.getOutputStream());//maintain userId-outputStream list
+//=======================================================================================
+//NOTICE: Most of DB methods feedback a MSG object("","confirm")or("fail reason","error") 
+//=======================================================================================
+//		delete the next line when DB is ok
+		MSG m = CONFIRM_MSG;
+//		MSG m = LoginDB.checkLogin(textMSG.getSerderId(), textMSG.getText();
+//		if(m == CONFIRM_MSG){
+			//maintain userId-outputStream list
+//			dto.getUserOutput().put(textMSG.getSenderId(), socket.getOutputStream());
 //		}
-//		else{
-//			oos.writeObject(ERROR_MSG);
-//			oos.flush();
-//		}
+		sendMSG(m);
 	}
 	
 	public void logout(){
@@ -78,9 +73,26 @@ public class MyThread extends Thread{
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void register(){
+		textMSG = (TextMSG)msg;
+		String[] str = textMSG.getText().split(",");
+		//DB static method to do register
+//		delete the next line when DB is ok
+		MSG m = CONFIRM_MSG;
+//		MSG m = DB.register(textMSG.getSerderId(), str[0],str[1],str[2]);
+		sendMSG(m);
+	}
+	
 	public ObjectOutputStream getOos() {
 		return oos;
 	}
-	
+	private void sendMSG(MSG msg){
+		try {
+			oos.writeObject(msg);
+			oos.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
