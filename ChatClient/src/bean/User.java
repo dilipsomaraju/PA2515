@@ -9,8 +9,8 @@ public class User {
 	private String userId;
 	private String psw;
 	private String nickName;
-	private String reName;
-	private String status;
+	private String givenName;
+	private int status;
 	private String question;
 	private String answer;
 	
@@ -22,20 +22,20 @@ public class User {
 	}
 	
 	public User(String userId, String psw, String nickName, String reName,
-			String status, String question, String answer) {
+			int status, String question, String answer) {
 		this.userId = userId;
 		this.psw = psw;
 		this.nickName = nickName;
-		this.reName = reName;
+		this.givenName = reName;
 		this.status = status;
 		this.question = question;
 		this.answer = answer;
 	}
-	public String getReName() {
-		return reName;
+	public String getGivenName() {
+		return givenName;
 	}
-	public void setReName(String reName) {
-		this.reName = reName;
+	public void setGivenName(String reName) {
+		this.givenName = reName;
 	}
 	public String getNickName() {
 		return nickName;
@@ -55,10 +55,10 @@ public class User {
 	public void setPsw(String psw) {
 		this.psw = psw;
 	}
-	public String getStatus() {
+	public int getStatus() {
 		return status;
 	}
-	public void setStatus(String status) {
+	public void setStatus(int status) {
 		this.status = status;
 	}
 	public String getQuestion() {

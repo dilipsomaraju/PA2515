@@ -140,7 +140,7 @@ abstract public class MyFrame extends JFrame{
 					final String[] str = labelPath.split("/");
 					c.setOpaque(false);
 					//Set MouseListener of Label
-					if(!value.equals("")){
+					if(!value.equals("") && !value.equals("tipLabel")){
 						((JLabel)c).addMouseListener(new MouseAdapter() {
 							public void mouseClicked(MouseEvent e) {
 								try {
@@ -149,6 +149,7 @@ abstract public class MyFrame extends JFrame{
 									e1.printStackTrace();
 								}
 							}
+							//Mouse enter or exit, show another picture
 							public void mouseEntered(MouseEvent e2){
 								((JLabel)c).setIcon(Img.getImgIcon(str[0]+"/c"+str[1]));
 							}
@@ -174,9 +175,8 @@ abstract public class MyFrame extends JFrame{
 							}
 						}
 					});
-					control.getDto().getComponentList().put(cCfg.getValue(), c);
 				}
-				else control.getDto().getComponentList().put(cCfg.getValue(), c);
+				control.getDto().getComponentList().put(cCfg.getValue(), c);
 				c.setBounds(cCfg.getX(),cCfg.getY(),cCfg.getW(),cCfg.getH());
 				p.add(c);
 				this.setContentPane(p);

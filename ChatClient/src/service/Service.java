@@ -31,16 +31,6 @@ public interface Service {
 	
 	void getFile();
 	
-	void checkChatHistory();
-	
-	void addCategory();
-	
-	void deleteCategory();
-	
-	void renameCategory();
-	
-	void changeCategoryIndex();
-	
 	void findById();
 	
 	void addFriend();
@@ -49,23 +39,13 @@ public interface Service {
 	
 	void deleteFriend();
 	
-	void relocateFriend();
-	
 	void inviteToGroup();
 	
-	void addGroupCategory();
+	void createGroup();
 	
-	void renameGroupCategory();
-	
-	void deleteGroupCategory();
-	
-	void changeGroupCategoryIndex();
-	
-	void addGroup();
+	void joinGroup();
 	
 	void renameGroup();
-	
-	void relocateGroup();
 	
 	void deleteGroup();
 	

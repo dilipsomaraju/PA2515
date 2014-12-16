@@ -5,9 +5,13 @@ import java.awt.event.ActionListener;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.JButton;
+
+import ui.Img;
 
 import bean.DiskData;
 import bean.MSG;
@@ -27,42 +31,59 @@ public class ClientService implements Service{
 	private JTextField userId;
 	private JPasswordField psw;
 	
-	private JTextField registerUserId;
+	private JTextField registerUserName;
 	private JPasswordField registerPsw;
 	private JPasswordField registerConfirmPsw;
 	private JTextField question;
 	private JTextField answer;
 	
+	private JTextField alterPswQuestion;
+	private JTextField alterPswAnswer;
+	private JPasswordField alterPsw;
+	private JPasswordField confirmAlterPsw;
+	private String answerString;
+	
 	private JCheckBox saveUserName;
 	private JCheckBox autoLogin;
 	
 	private String mode;
-	
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public ClientService(Dto dto, Control control){
 		this.dto = dto;
 		this.control = control;
 	}
 
-	@Override
-	public void init() {
+	public void initComponents() {
 		dto.getFrameList().get("ConnectFrame").setVisible(true);
-		//Init components
+		//ConnectToServer components
 		serverIp = ((JTextField)(dto.getComponentList().get("serverIp")));
 		portNum = ((JTextField)(dto.getComponentList().get("portNum")));
+		//Login components
 		userId = ((JTextField)(dto.getComponentList().get("userId")));
 		psw = ((JPasswordField)(dto.getComponentList().get("psw")));
 		saveUserName = ((JCheckBox)(dto.getComponentList().get("saveUserName")));
 		autoLogin = ((JCheckBox)(dto.getComponentList().get("autoLogin")));
-		registerUserId = ((JTextField)(dto.getComponentList().get("registerUserId")));
+		//Register components
+		registerUserName = ((JTextField)(dto.getComponentList().get("registerUserName")));
 		registerPsw = ((JPasswordField)(dto.getComponentList().get("registerPassword")));
 		registerConfirmPsw = ((JPasswordField)(dto.getComponentList().get("registerConfirmPassword")));
 		question = ((JTextField)(dto.getComponentList().get("question")));
 		answer = ((JTextField)(dto.getComponentList().get("answer")));
-		
-		
+		//Alter Password components
+		alterPswQuestion = ((JTextField)(dto.getComponentList().get("alterPswQuestion")));
+		alterPswAnswer = ((JTextField)(dto.getComponentList().get("alterPswAnswer")));
+		alterPsw = ((JPasswordField)(dto.getComponentList().get("alterrPassword")));
+		confirmAlterPsw = ((JPasswordField)(dto.getComponentList().get("confirmAlterPassword")));
+		//Setting
 		serverIp.setText(dto.getServerIp());
 		portNum.setText(dto.getPortNum());
+		
+		alterPswQuestion.setEnabled(false);
+		alterPsw.setEnabled(false);
+		confirmAlterPsw.setEnabled(false);
+		
 		mode = dto.getMode();
 		if(mode==null||mode.equals("")){
 			saveUserName.setSelected(false);
@@ -108,6 +129,7 @@ public class ClientService implements Service{
 			}
 		});
 	}
+	
 	@Override
 	public void connectToServer() {
 		serverIp = ((JTextField)(dto.getComponentList().get("serverIp")));
@@ -134,15 +156,21 @@ public class ClientService implements Service{
 					"Failed to connect to Server", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+
+	public void registerFrame() {
+		dto.getFrameList().get("RegisterFrame").setVisible(true);
+	}
+	
 	@Override
 	public synchronized void register() {
-		if(registerUserId.getText().equals(""))
+		if(userId.getText().equals(""))
 			JOptionPane.showMessageDialog(null,
 					"Please input your id", "Warning", JOptionPane.WARNING_MESSAGE);
-		else if(!registerUserId.getText().matches("\\d+"))
+		else if(!userId.getText().matches("\\d+"))
 			JOptionPane.showMessageDialog(null,
 					"Id should be INTEGER", "Warning", JOptionPane.WARNING_MESSAGE);
-		else if(registerUserId.getText().length() > 9)
+		else if(userId.getText().length() > 9)
 			JOptionPane.showMessageDialog(null,
 					"The length of Id should be at most 9 bits", "Warning", JOptionPane.WARNING_MESSAGE);
 		else if(new String(registerPsw.getPassword()).equals(""))
@@ -160,10 +188,16 @@ public class ClientService implements Service{
 		else if(answer.getText().equals(""))
 			JOptionPane.showMessageDialog(null,
 					"Please input your answer", "Warning", JOptionPane.WARNING_MESSAGE);
+		else if(registerUserName.getText().equals(""))
+			JOptionPane.showMessageDialog(null,
+					"Please input your Nickname", "Warning", JOptionPane.WARNING_MESSAGE);
 		else{
 			//Send register MSG
-			dto.getSc().sendMSG(new TextMSG(registerUserId.getText(),"register","",
-					encryptPsw(new String(registerPsw.getPassword()))+","+question.getText()+","+answer.getText()));
+			dto.getSc().sendMSG(new TextMSG(userId.getText(),"register","",
+					encryptPsw(new String(registerPsw.getPassword()))+
+					"|"+registerUserName.getText()+"|"+question.getText()+
+					"|"+answer.getText()));
+			
 			MSG m = dto.getSc().getMSG();
 			if(m.gettOM().equals("confirm")){
 				JOptionPane.showMessageDialog(null,
@@ -173,48 +207,74 @@ public class ClientService implements Service{
 			else JOptionPane.showMessageDialog(null,
 					m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
 		}
+		dto.getFrameList().get("RegisterFrame").setVisible(false);
 	}
+	
 	public void remove(){
-		registerUserId.setText("");
+		registerUserName.setText("");
 		registerPsw.setText("");
 		registerConfirmPsw.setText("");
 		question.setText("");
 		answer.setText("");
 	}
 	
-	public void registerFrame() {
-		dto.getFrameList().get("RegisterFrame").setVisible(true);
-		
-	}
-	
 	public void alterPswFrame(){
-		dto.getFrameList().get("AlterPswFrame").setVisible(true);
-	}
-
-	public synchronized void alterPsw(){
-		//TODO
-	}
-	
-	public void getQuestion(){
-		//TODO 
-		System.out.println("getQuestion");
-	}
-	
-	public synchronized void forgetPassword(){
-		//TODO 
-		System.out.println("forgetPassword");
-	}
-	
-	public void findPswFrame(){
 		if(userId.getText().equals("")){
 			JOptionPane.showMessageDialog(null,
 					"Please input your id", "Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+		dto.getFrameList().get("AlterPswFrame").setVisible(true);
 		getQuestion();
-		dto.getFrameList().get("FindPswFrame").setVisible(true);
 	}
 
+	public synchronized void alterPsw(){
+		dto.getSc().sendMSG(new TextMSG(userId.getText(), "alterPsw", null, 
+				encryptPsw(new String(confirmAlterPsw.getPassword()))));
+		MSG m = dto.getSc().getMSG();
+		if(m.gettOM().equals("confirm")){
+			JOptionPane.showMessageDialog(null,
+					"Success to alter password", "Inform", JOptionPane.INFORMATION_MESSAGE);
+			dto.getFrameList().get("AlterPswFrame").setVisible(false);
+		}
+		else
+			JOptionPane.showMessageDialog(null,
+					m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public void getQuestion(){
+		dto.getSc().sendMSG(new MSG(userId.getText(), "getQuestion"));
+		MSG m = dto.getSc().getMSG();
+		if(m.gettOM().equals("confirm")){
+			//TODO on server side This Text MSG=(null,"confirm","question","answer")
+			answerString = ((TextMSG)m).getText();
+			alterPswQuestion.setText(((TextMSG)m).getReceiverId());
+			((JButton)(dto.getComponentList().get("alterPsw"))).setEnabled(false);
+			alterPswQuestion.setEnabled(false);
+			alterPsw.setEnabled(false);
+			confirmAlterPsw.setEnabled(false);
+		}
+		else{
+			JOptionPane.showMessageDialog(null,
+					m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
+			dto.getFrameList().get("AlterPswFrame").setVisible(false);
+		}
+		
+	}
+	
+	public void judgeQuestion(){
+		if(alterPswAnswer.getText().equals(answerString)){
+			((JLabel)(dto.getComponentList().get("tipLabel"))).setIcon(null);
+			alterPswAnswer.setEnabled(false);
+			((JButton)(dto.getComponentList().get("judgeQuestion"))).setEnabled(false);
+			alterPsw.setEnabled(true);
+			confirmAlterPsw.setEnabled(true);
+			((JButton)(dto.getComponentList().get("alterPsw"))).setEnabled(true);
+		}
+		else
+			((JLabel)(dto.getComponentList().get("tipLabel"))).setIcon(Img.getImgIcon("alter/tip.png"));
+	}
+	
 	@Override
 	public void login() {
 		if(userId.getText().equals("")){
@@ -222,33 +282,44 @@ public class ClientService implements Service{
 					"Please input your id", "Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
+		else if(!userId.getText().matches("\\d+")){
+			JOptionPane.showMessageDialog(null,
+					"Id should be INTEGER", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		else if(userId.getText().length() > 9){
+			JOptionPane.showMessageDialog(null,
+					"The length of Id should be at most 9 bits", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
 		else if(new String(psw.getPassword()).equals("")){
 			JOptionPane.showMessageDialog(null,
 					"Please input your password", "Warning", JOptionPane.WARNING_MESSAGE);
 			return;
 		}
-			dto.getSc().sendMSG(new TextMSG(userId.getText(),
-					"login",null,encryptPsw(new String(psw.getPassword()))));
-			MSG m =  dto.getSc().getMSG();
-			if(m.gettOM().equals("confirm")){
-				dto.getFrameList().get("LoginFrame").setVisible(false);
-				dto.getFrameList().get("MainFrame").setVisible(true);
-				DiskData dd = new DiskData();
-				dd.setMode(mode);
-				dd.setUserId(userId.getText());
-				if(!autoLogin.isSelected())
-					dd.setPortNum("");
-				dd.setPsw(new String(psw.getPassword()));
-				dd.setPortNum(portNum.getText());
-				dd.setServerIp(serverIp.getText());
-				control.getDiskData().saveData(dd);
-				//Strat a listener Thread
-				new ListenerTread();
-			}
-			else JOptionPane.showMessageDialog(null,
-					m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
+		dto.getSc().sendMSG(new TextMSG(userId.getText(),
+				"login",null,encryptPsw(new String(psw.getPassword()))));
+		MSG m =  dto.getSc().getMSG();
+		if(m.gettOM().equals("confirm")){
+			dto.getFrameList().get("LoginFrame").setVisible(false);
+			dto.getFrameList().get("MainFrame").setVisible(true);
+			//save Disk data
+			DiskData dd = new DiskData();
+			dd.setMode(mode);
+			dd.setUserId(userId.getText());
+			if(!autoLogin.isSelected())
+				dd.setPortNum("");
+			dd.setPsw(new String(psw.getPassword()));
+			dd.setPortNum(portNum.getText());
+			dd.setServerIp(serverIp.getText());
+			control.getDiskData().saveData(dd);
+			//Strat a listener Thread
+			new ListenerTread().start();
+		}
+		else JOptionPane.showMessageDialog(null,
+				m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
 	}
-
+	
 	@Override
 	public String encryptPsw(String str) {
 		String s = null;
@@ -269,6 +340,7 @@ public class ClientService implements Service{
 		}
 		return s;
 	}
+	
 	public void logout() {
 		// When has Oos but user didn't logged in 
 		if(dto.getOos() != null&&dto.getUser() == null){
@@ -280,6 +352,11 @@ public class ClientService implements Service{
 		}
 	}
 
+	@Override
+	public void init(){
+		//TODO
+	}
+	
 	@Override
 	public void sendTextMSG() {
 		// TODO Auto-generated method stub
@@ -311,36 +388,6 @@ public class ClientService implements Service{
 	}
 
 	@Override
-	public synchronized void checkChatHistory() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void addCategory() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void deleteCategory() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void renameCategory() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void changeCategoryIndex() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public synchronized void findById() {
 		// TODO Auto-generated method stub
 		
@@ -365,55 +412,24 @@ public class ClientService implements Service{
 	}
 
 	@Override
-	public synchronized void relocateFriend() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public synchronized void inviteToGroup() {
 		// TODO Auto-generated method stub
 		
 	}
 
+
 	@Override
-	public synchronized void addGroupCategory() {
+	public synchronized void createGroup() {
 		// TODO Auto-generated method stub
 		
 	}
-
 	@Override
-	public synchronized void renameGroupCategory() {
+	public synchronized void joinGroup() {
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public synchronized void deleteGroupCategory() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void changeGroupCategoryIndex() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void addGroup() {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public void renameGroup() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void relocateGroup() {
 		// TODO Auto-generated method stub
 		
 	}
@@ -431,10 +447,12 @@ public class ClientService implements Service{
 	}
 	private class ListenerTread extends Thread{
 		public synchronized void run(){
-			
+			//TODO 
+			System.out.println("Listener Thread started");
 		}
 	}
 	//Unused methods
 	public void saveUserName() {}
 	public void autoLogin() {}
+	public void tipLabel() {}
 }

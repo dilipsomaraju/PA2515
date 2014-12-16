@@ -34,7 +34,7 @@ public class Control {
 		//init Frames
 		initFrame(dto);
 		//Get initial data in disk
-		clientService.init();
+		clientService.initComponents();
 	}
 
 
@@ -67,8 +67,6 @@ public class Control {
 					dto.getFrameList().put("LoginFrame", f);
 				if(frameCfg.getClassName().equals("ui.RegisterFrame"))
 					dto.getFrameList().put("RegisterFrame", f);
-				if(frameCfg.getClassName().equals("ui.FindPswFrame"))
-					dto.getFrameList().put("FindPswFrame", f);
 				if(frameCfg.getClassName().equals("ui.AlterPswFrame"))
 				dto.getFrameList().put("AlterPswFrame", f);
 				f.setDto(dto);
