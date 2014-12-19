@@ -3,15 +3,16 @@ package bean;
 import java.io.Serializable;
 
 
+/**
+ * @author SuperSun
+ * Package of diskRecord.dat
+ */
 public class DiskData implements Serializable{
-	
-	private User user;
-	private ContactList contactList;
-	private String mode;//auto login /save userId / nothing 
-	private String sendMsgMode; //press "Enter"/"Ctrl + Enter" to send message
+	private String userId;
+	private String psw;
+	private String mode;//auto login /save userId / nothing
 	private String serverIp;
 	private String portNum;
-	
 	
 	public String getServerIp() {
 		return serverIp;
@@ -33,30 +34,23 @@ public class DiskData implements Serializable{
 		return mode;
 	}
 
-	public String getSendMsgMode() {
-		return sendMsgMode;
-	}
-
-	public void setSendMsgMode(String sendMsgMode) {
-		this.sendMsgMode = sendMsgMode;
-	}
-
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
 
-	public User getUser() {
-		return user;
+	public String getUserId() {
+		return userId;
 	}
-	public void setUser(User user) {
-		this.user = user;
+
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
-	public ContactList getContactList() {
-		return contactList;
+
+	public String getPsw() {
+		return psw;
 	}
-	public void setContactList(ContactList cl) {
-		this.contactList = cl;
+
+	public void setPsw(String psw) {
+		this.psw = psw;
 	}
-	
-	
 }

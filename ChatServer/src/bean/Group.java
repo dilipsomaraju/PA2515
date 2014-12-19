@@ -1,54 +1,59 @@
 package bean;
 
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * @author SuperSun
  * To match the group contact list
  * members are users belongs to a certain group and in each User object, psw is null for security.
  */
-public class Group {
-	private String name;
-	private String nickname;
-	private int right;
-	private List<User> members;
+public class Group  implements Serializable{
+	private String groupId;
+	private String nickName;
+	private String givenName;
 	
+	/**
+	 * Constructor
+	 */
 	public Group() {
 	}
 	
-	public Group(String name, String nickname, int right, List<User> members) {
+	/**
+	 * Constructor
+	 * @param groupId
+	 * @param nickName
+	 * @param givenName
+	 */
+	public Group(String groupId, String nickName, String givenName) {
 		super();
-		this.name = name;
-		this.nickname = nickname;
-		this.right = right;
-		this.members = members;
+		this.groupId = groupId;
+		this.nickName = nickName;
+		this.givenName = givenName;
 	}
 
-	public String getNickname() {
-		return nickname;
+	public String getGivenName() {
+		return givenName;
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setGivenName(String givenName) {
+		this.givenName = givenName;
 	}
 
-	public int getRight() {
-		return right;
+	public String getGroupId() {
+		return groupId;
 	}
-	public void setRight(int right) {
-		this.right = right;
+
+	public void setGroupId(String groupId) {
+		this.groupId = groupId;
 	}
-	public String getName() {
-		return name;
+
+	public String getNickName() {
+		return nickName;
 	}
-	public void setName(String number) {
-		this.name = number;
+	public void setNickName(String number) {
+		this.nickName = number;
 	}
-	public List<User> getMembers() {
-		return members;
+	public String toString(){
+		return givenName+"  ("+nickName+")";
 	}
-	public void setMembers(List<User> members) {
-		this.members = members;
-	}
-	
 }

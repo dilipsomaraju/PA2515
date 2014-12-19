@@ -5,19 +5,24 @@ import java.io.Serializable;
 /**
  * @author SuperSun
  * The basic message template
- * IF MSG is sent by Server, sender is the message generator or null
- * IF MSG is sent by Client, sender is the logged in userId
- * 
- * toM is short for type of message, it is an important attribute
  */
 public class MSG implements Serializable{
 	private String senderId;
 	private String tOM;
 
 	
+	/**
+	 * Constructor
+	 */
 	public MSG() {
 		super();
 	}
+	
+	/**
+	 * Constructor
+	 * @param senderId
+	 * @param tOM
+	 */
 	public MSG(String senderId, String tOM) {
 		this.senderId = senderId;
 		this.tOM = tOM;

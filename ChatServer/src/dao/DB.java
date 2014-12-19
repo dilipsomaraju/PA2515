@@ -11,8 +11,7 @@ public class DB {
 		Connection conn = null;
 		try{
 			Class.forName("com.mysql.jdbc.Driver");
-			//TODO
-			conn = DriverManager.getConnection("jdbc:mysql://localhost/online_ordering_system?user=root&password=123");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost/Chat_System?user=root&password=123");
 		}	catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {

@@ -13,9 +13,20 @@ public class FileMSG extends MSG{
 	private File file;
 	
 	
+	/**
+	 * Constructor
+	 */
 	public FileMSG() {
 		super();
 	}
+	
+	/**
+	 * Constructor
+	 * @param senderId
+	 * @param toM
+	 * @param receiverId
+	 * @param file
+	 */
 	public FileMSG(String senderId, String toM, String receiverId, File file) {
 		super(senderId, toM);
 		this.receiverId = receiverId;

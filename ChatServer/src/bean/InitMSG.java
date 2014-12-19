@@ -8,6 +8,12 @@ package bean;
 public class InitMSG extends MSG{
 	private ContactList contactList;
 
+	/**
+	 * Constructor
+	 * @param senderId
+	 * @param tOM
+	 * @param contactList
+	 */
 	public InitMSG(String senderId, String tOM, ContactList contactList) {
 		super(senderId, tOM);
 		this.contactList = contactList;

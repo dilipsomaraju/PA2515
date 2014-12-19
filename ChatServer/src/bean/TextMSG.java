@@ -10,9 +10,20 @@ public class TextMSG extends MSG{
 	private String receiverId;
 	private String text;
 	
+	/**
+	 * Constructor
+	 */
 	public TextMSG() {
 		super();
 	}
+	
+	/**
+	 * Constructor
+	 * @param senderId
+	 * @param toM
+	 * @param receiverId
+	 * @param text
+	 */
 	public TextMSG(String senderId, String toM, String receiverId, String text) {
 		super(senderId, toM);
 		this.receiverId = receiverId;
