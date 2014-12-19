@@ -8,16 +8,19 @@ import java.net.Socket;
 import bean.IO;
 import bean.MSG;
 
+/**
+ * @author SuperSun
+ * Implement the interface to communicate with Server
+ */
 public class SocketCommunicate implements Communicate{
-	
 	private IO io;
-	MSG msg;
-	String tOM;
+	private MSG msg;
+	private Socket socket;
 	
 	@Override
 	public boolean connectToServer(String serverIp, int portNum) {
 		try {
-			Socket socket = new Socket(serverIp,portNum);
+			socket = new Socket(serverIp,portNum);
 			io = new IO(new ObjectOutputStream(socket.getOutputStream()), new ObjectInputStream(socket.getInputStream()));
 			msg = (MSG)(io.getOis().readObject());
 			if(msg.gettOM() != null && msg.gettOM().equals("confirm"))
@@ -29,30 +32,33 @@ public class SocketCommunicate implements Communicate{
 		return false;
 	}
 	
+	@Override
 	public MSG getMSG() {
 		try {
 			msg = (MSG)(io.getOis().readObject());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		} catch (ClassNotFoundException e) {
+		} catch (Exception e) {
+			//TODO to be delete
 			e.printStackTrace();
 			return null;
 		}
 		return msg;
 	}
 
-	public IO getIo() {
-		return io;
-	}
-
-	public boolean sendMSG(MSG msg) {
+	@Override
+	public void sendMSG(MSG msg) {
 		try {
 			io.getOos().writeObject(msg);
 			io.getOos().flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return false;
+	}
+	
+	public Socket getSocket() {
+		return socket;
+	}
+
+	public IO getIo() {
+		return io;
 	}
 }

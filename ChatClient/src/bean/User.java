@@ -1,11 +1,12 @@
 package bean;
 
+import java.io.Serializable;
+
 /**
  * @author SuperSun
  * User Bean
- * 
  */
-public class User {
+public class User implements Serializable{
 	private String userId;
 	private String psw;
 	private String nickName;
@@ -14,13 +15,32 @@ public class User {
 	private String question;
 	private String answer;
 	
+	/**
+	 * Constructor
+	 */
 	public User() {
 	}
+	
+	/**
+	 * Constructor
+	 * @param userId
+	 * @param psw
+	 */
 	public User(String userId, String psw){
 		this.userId = userId;
 		this.psw = psw;
 	}
 	
+	/**
+	 * Constructor
+	 * @param userId
+	 * @param psw
+	 * @param nickName
+	 * @param reName
+	 * @param status
+	 * @param question
+	 * @param answer
+	 */
 	public User(String userId, String psw, String nickName, String reName,
 			int status, String question, String answer) {
 		this.userId = userId;
@@ -72,5 +92,8 @@ public class User {
 	}
 	public void setAnswer(String answer) {
 		this.answer = answer;
+	}
+	public String toString(){
+		return givenName+"  ("+nickName+")";
 	}
 }

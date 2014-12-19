@@ -7,14 +7,20 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+/**
+ * @author SuperSun
+ * Get and process cfg.xml
+ */
 public class RootConfig {
-	
 	private static UIConfig UI_CONFIG = null;
 	
 	private static DataConfig DATA_CONFIG = null;
 
+	/**
+	 * When coding, IS_DEBUG = true;
+	 * When pubulished, IS_DEBUG = false;
+	 */
 	private static final boolean IS_DEBUG = true;
-	
 	static {
 		try {
 			//The way to read configuration file when do debugging

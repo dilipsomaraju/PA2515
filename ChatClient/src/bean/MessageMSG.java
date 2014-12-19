@@ -14,10 +14,21 @@ public class MessageMSG extends MSG{
 	private String link;
 	private String time;
 	
+	/**
+	 * Constructor
+	 */
 	public MessageMSG() {
 		super();
 	}
 
+	/**
+	 * Constructor
+	 * @param senderId
+	 * @param toM
+	 * @param text
+	 * @param link
+	 * @param time
+	 */
 	public MessageMSG(String senderId, String toM, String text, String link,
 			String time) {
 		super(senderId, toM);

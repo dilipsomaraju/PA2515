@@ -6,6 +6,10 @@ import java.util.List;
 
 import org.dom4j.Element;
 
+/**
+ * @author SuperSun
+ * Configuration of data interface
+ */
 public class DataInterfaceConfig  implements Serializable{
 	/**
 	 * Class name
@@ -17,6 +21,10 @@ public class DataInterfaceConfig  implements Serializable{
 	 */
 	private final HashMap<String,String> param;
 	
+	/**
+	 * Constructor
+	 * @param dataInterfaceConfig
+	 */
 	public DataInterfaceConfig (Element dataInterfaceConfig){
 		//Get Class Name
 		this.className = dataInterfaceConfig.attributeValue("className");

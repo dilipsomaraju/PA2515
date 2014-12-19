@@ -14,15 +14,20 @@ import dao.Data;
 import dao.SocketCommunicate;
 import dto.Dto;
 
+/**
+ * @author SuperSun
+ * Control layer
+ */
 public class Control {
-	
 	private Dto dto;
-	
 	
 	private final Data diskData;
 
 	private ClientService clientService;
 
+	/**
+	 * Constructor
+	 */
 	public Control() {
 		dto = new Dto();
 		//Get local disk data
@@ -36,8 +41,6 @@ public class Control {
 		//Get initial data in disk
 		clientService.initComponents();
 	}
-
-
 
 	/**
 	 * initialize all frames, using their own paint method 
@@ -69,6 +72,8 @@ public class Control {
 					dto.getFrameList().put("RegisterFrame", f);
 				if(frameCfg.getClassName().equals("ui.AlterPswFrame"))
 				dto.getFrameList().put("AlterPswFrame", f);
+				if(frameCfg.getClassName().equals("ui.ConfigFrame"))
+					dto.getFrameList().put("ConfigFrame", f);
 				f.setDto(dto);
 			}
 		} catch (Exception e) {

@@ -1,45 +1,49 @@
 package bean;
 
-import java.util.List;
+import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * @author SuperSun
  * To match the contact list both group and individule
  */
-public class ContactList {
-	List<User> users;
-	List<Group> groups;
+public class ContactList  implements Serializable{
+	Vector<User> users;
+	Vector<Group> groups;
 	
 	
+	/**
+	 * Constructor
+	 */
 	public ContactList() {
 		super();
 	}
 
-
-	public ContactList(List<User> users, List<Group> groups) {
+	/**
+	 * Constructor
+	 * @param users user contact list
+	 * @param groups group contact list
+	 */
+	public ContactList(Vector<User> users, Vector<Group> groups) {
 		super();
 		this.users = users;
 		this.groups = groups;
 	}
 
-
-	public List<User> getUsers() {
+	public Vector<User> getUsers() {
 		return users;
 	}
 
-
-	public void setUsers(List<User> users) {
+	public void setUsers(Vector<User> users) {
 		this.users = users;
 	}
 
-
-	public List<Group> getGroups() {
+	public Vector<Group> getGroups() {
 		return groups;
 	}
 
-
-	public void setGroups(List<Group> groups) {
+	public void setGroups(Vector<Group> groups) {
 		this.groups = groups;
 	}
-	
+
 }

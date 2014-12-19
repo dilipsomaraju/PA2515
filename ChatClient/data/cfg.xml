@@ -57,8 +57,20 @@
 			<component className = "javax.swing.JButton" value = "alterPsw" path = "alter/button.jpg" x = "338" y = "310" w = "67" h = "25"/>
 		</frame>
 		
-		<frame className = "ui.MainFrame" path = "" title = "LANCHAT" x = "30" y = "30" w = "240" h = "711" frameStyle = "1">
-			<component className = "javax.swing.JLabel" value = "" path = "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
+		<frame className = "ui.MainFrame" path = "main/main.jpg" title = "LANCHAT" x = "30" y = "30" w = "250" h = "500" frameStyle = "1">
+			<component className = "javax.swing.JTabbedPane" value = "tabPanel" path = "" x = "1" y = "102" w = "242" h = "342"/>
+			<component className = "javax.swing.JButton" value = "configFrame" path = "main/config.jpg" x = "2" y = "445" w = "80" h = "25"/>
+			<component className = "javax.swing.JButton" value = "findFrame" path = "main/find.jpg" x = "85" y = "445" w = "80" h = "25"/>
+		</frame>
+		
+		<frame className = "ui.ConfigFrame" path = "" title = "Configuration" x = "30" y = "30" w = "285" h = "500" frameStyle = "1">
+			<component className = "javax.swing.JButton" value = "" path = "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
+			<component className = "javax.swing.JCheckBox" value = "saveUserName" path = "Remember userName" x = "162" y = "309" w = "150" h = "18"/>
+			<component className = "javax.swing.JCheckBox" value = "autoLogin" path = "Auto login" x = "310" y = "309" w = "100" h = "18"/>
+		</frame>
+		
+		<frame className = "ui.ChatFrame" path = "" title = "Chat" x = "30" y = "30" w = "285" h = "500" frameStyle = "1">
+			<component className = "javax.swing.JButton" value = "" path = "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
 		</frame>
 	</ui>	
 	<data >

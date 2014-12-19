@@ -7,6 +7,20 @@ public class InviteToGroupMSG extends MSG{
 	private List<String> receiverIds;
 	private String text;
 	
+	/**
+	 * Constructor
+	 */
+	public InviteToGroupMSG() {
+		super();
+	}
+
+	/**
+	 * Constructor
+	 * @param senderId
+	 * @param tOM
+	 * @param receiverIds
+	 * @param text
+	 */
 	public InviteToGroupMSG(String senderId, String tOM, List<String> receiverIds,
 			String text) {
 		super(senderId, tOM);
@@ -14,10 +28,6 @@ public class InviteToGroupMSG extends MSG{
 		this.text = text;
 	}
 	
-	public InviteToGroupMSG() {
-		super();
-	}
-
 	public List<String> getReceiverIds() {
 		return receiverIds;
 	}

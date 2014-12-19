@@ -2,8 +2,11 @@ package config;
 
 import org.dom4j.Element;
 
+/**
+ * @author SuperSun
+ * Configuration of Components
+ */
 public class ComponentConfig {
-
 	private String className;
 	
 	private String path;
@@ -18,6 +21,10 @@ public class ComponentConfig {
 	
 	private int h;
 	
+	/**
+	 * Constructor
+	 * @param component
+	 */
 	public ComponentConfig(Element component) {
 		this.className = component.attributeValue("className");
 		this.path = component.attributeValue("path");

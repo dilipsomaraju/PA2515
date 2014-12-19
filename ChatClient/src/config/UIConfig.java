@@ -5,10 +5,17 @@ import java.util.List;
 
 import org.dom4j.Element;
 
+/**
+ * @author SuperSun
+ * Configuration of UI
+ */
 public class UIConfig {
-
 	private List<FrameConfig> framesConfig;
 	
+	/**
+	 * Constructor
+	 * @param ui
+	 */
 	public UIConfig(Element ui) {
 		@SuppressWarnings("unchecked")
 		List<Element> frames = ui.elements("frame");

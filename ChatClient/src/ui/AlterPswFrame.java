@@ -7,8 +7,17 @@ import javax.swing.JFrame;
 import config.FrameConfig;
 import control.Control;
 
+/**
+ * @author SuperSun
+ * Alter password frame
+ */
 public class AlterPswFrame extends MyFrame{
 
+	/**
+	 * consturctor
+	 * @param frameCfg frame configuration
+	 * @param control control object
+	 */
 	public AlterPswFrame(FrameConfig frameCfg, Control control) {
 		super(frameCfg, control);
 		this.createFrame();

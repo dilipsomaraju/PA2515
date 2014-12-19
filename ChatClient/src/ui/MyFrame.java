@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Graphics;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -14,6 +15,9 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+
+//import com.sun.awt.AWTUtilities;
 
 import config.ComponentConfig;
 import config.FrameConfig;
@@ -66,6 +70,8 @@ abstract public class MyFrame extends JFrame{
 	
 	protected Control control;
 	
+	protected JPanel panel;
+	
 	
 	/**
 	 * Construction of MyFrame
@@ -81,6 +87,7 @@ abstract public class MyFrame extends JFrame{
 		this.frameStyle = frameCfg.getFrameStyle();
 		this.ComponentsCfg = frameCfg.getComponentsConfig();
 		this.control = control;
+//		AWTUtilities.setWindowOpacity(this, 0.8F);
 	}
 
 
@@ -90,10 +97,9 @@ abstract public class MyFrame extends JFrame{
 	protected void createFrame() {
 		this.setTitle(title);
 		this.setBounds(x, y, w, h);
-		JPanel p = new JPanel();
-		p.setOpaque(false);
-		p.setLayout(null);
-		p.setOpaque(false);
+		panel = new JPanel();
+		panel.setOpaque(false);
+		panel.setLayout(null);
 		//Set Backgroud graphic
 		JLabel label = new JLabel(Img.getImgIcon(framePath));
 		label.setBounds(0, 0, w, h);
@@ -110,6 +116,10 @@ abstract public class MyFrame extends JFrame{
 				cls = Class.forName(cCfg.getClassName());
 				// Get Constructor
 				Constructor<?> ctr = cls.getConstructor();
+//=====================================JTabbedPane==============================================
+				if(cCfg.getClassName().equals("javax.swing.JTabbedPane"))
+					UIManager.put("TabbedPane.contentOpaque", false);
+//==============================================================================================
 				// Create objec based on consturctor
 				final JComponent c = (JComponent) ctr.newInstance();
 				final String value = cCfg.getValue();
@@ -176,21 +186,20 @@ abstract public class MyFrame extends JFrame{
 						}
 					});
 				}
+//===============================================================================================
 				control.getDto().getComponentList().put(cCfg.getValue(), c);
 				c.setBounds(cCfg.getX(),cCfg.getY(),cCfg.getW(),cCfg.getH());
-				p.add(c);
-				this.setContentPane(p);
+				panel.add(c);
+				this.setContentPane(panel);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 	
-
-
 	public void setDto(Dto dto) {
 		this.dto = dto;
 	}
 	
-	abstract public void paint(Graphics g);
+	public abstract void paint(Graphics g);
 }

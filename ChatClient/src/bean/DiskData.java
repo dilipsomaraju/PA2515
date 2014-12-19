@@ -3,14 +3,16 @@ package bean;
 import java.io.Serializable;
 
 
+/**
+ * @author SuperSun
+ * Package of diskRecord.dat
+ */
 public class DiskData implements Serializable{
-	
 	private String userId;
 	private String psw;
-	private String mode;//auto login /save userId / nothing 
+	private String mode;//auto login /save userId / nothing
 	private String serverIp;
 	private String portNum;
-	
 	
 	public String getServerIp() {
 		return serverIp;
@@ -51,5 +53,4 @@ public class DiskData implements Serializable{
 	public void setPsw(String psw) {
 		this.psw = psw;
 	}
-
 }

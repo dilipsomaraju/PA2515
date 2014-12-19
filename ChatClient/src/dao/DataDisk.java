@@ -14,16 +14,14 @@ import bean.DiskData;
 
 /**
  * @author SuperSun
- * Implement the interface to access
- * Read or write dto object from or to local disk
- * dto contains User, MSG, HashMap
+ * Implement the interface to access local disk
  */
 public class DataDisk implements Data{
 	
 	private final  String filePath;
 	
 	/**
-	 * Construction method
+	 * Constructor
 	 * @param param contains configuration of Disk
 	 */
 	public DataDisk(HashMap<String,String> param) {

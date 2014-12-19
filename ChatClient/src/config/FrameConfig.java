@@ -6,6 +6,10 @@ import java.util.List;
 
 import org.dom4j.Element;
 
+/**
+ * @author SuperSun
+ * Configuration of Frame
+ */
 public class FrameConfig implements Serializable{
 	/**
 	 * Frame title
@@ -49,6 +53,10 @@ public class FrameConfig implements Serializable{
 	
 	private final List<ComponentConfig> componentsConfig;
 	
+	/**
+	 * Constructor
+	 * @param frame
+	 */
 	public FrameConfig(Element frame){
 		@SuppressWarnings("unchecked")
 		List<Element> components = frame.elements("component");
@@ -103,4 +111,3 @@ public class FrameConfig implements Serializable{
 		return frameStyle;
 	}
 }
-

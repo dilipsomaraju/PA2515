@@ -1,7 +1,5 @@
 package dto;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 import javax.swing.JComponent;
@@ -15,11 +13,7 @@ import dao.SocketCommunicate;
 
 /**
  * @author SuperSun
- * Data translate object, it plays the role as Data source, contains:
- * logged in user info
- * current msg (need syncronized lock the operation)
- * chatFrameList is a map<speaker id, Frame object>
- * cl is the ContactList
+ * Data translate object
  */
 public class Dto {
 	private User user;
@@ -29,44 +23,20 @@ public class Dto {
 	private HashMap<String, JComponent> componentList;
 	private ContactList contactList;
 	private SocketCommunicate sc;
-	private ObjectOutputStream oos;
-	private ObjectInputStream ois;
 	private String mode;//auto login /save userId / "" 
-	private boolean isRun;
 	private String serverIp;
 	private String portNum;
+	private boolean isRun;
 	
+	/**
+	 * Constructor
+	 */
 	public Dto() {
 		user = new User();
 		contactList = new ContactList();
 		frameList = new HashMap<String, JFrame>();
 		chatPanelList = new HashMap<String, JPanel>();
 		componentList = new HashMap<String, JComponent>();
-		isRun = true;
-	}
-
-	public ObjectOutputStream getOos() {
-		return oos;
-	}
-
-	public void setOos(ObjectOutputStream oos) {
-		this.oos = oos;
-	}
-
-	public ObjectInputStream getOis() {
-		return ois;
-	}
-
-	public void setOis(ObjectInputStream ois) {
-		this.ois = ois;
-	}
-
-	public boolean isRun() {
-		return isRun;
-	}
-
-	public void setRun(boolean isRun) {
-		this.isRun = isRun;
 	}
 
 	public User getUser() {
@@ -147,6 +117,14 @@ public class Dto {
 
 	public void setPortNum(String portNum) {
 		this.portNum = portNum;
+	}
+
+	public boolean isRun() {
+		return isRun;
+	}
+
+	public void setRun(boolean isRun) {
+		this.isRun = isRun;
 	}
 
 	public void setDiskRecord(DiskData diskData) {
