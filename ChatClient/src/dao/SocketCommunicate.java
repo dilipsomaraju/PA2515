@@ -38,7 +38,7 @@ public class SocketCommunicate implements Communicate{
 			msg = (MSG)(io.getOis().readObject());
 		} catch (Exception e) {
 			//TODO to be delete
-			e.printStackTrace();
+//			e.printStackTrace();
 			return null;
 		}
 		return msg;

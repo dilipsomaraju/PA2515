@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Graphics;
+import java.awt.Image;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.awt.event.MouseEvent;
 import java.lang.reflect.Constructor;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -87,6 +89,8 @@ abstract public class MyFrame extends JFrame{
 		this.frameStyle = frameCfg.getFrameStyle();
 		this.ComponentsCfg = frameCfg.getComponentsConfig();
 		this.control = control;
+		Image image=new ImageIcon("graphic/tray.png").getImage();
+		this.setIconImage(image);
 //		AWTUtilities.setWindowOpacity(this, 0.8F);
 	}
 
@@ -105,7 +109,7 @@ abstract public class MyFrame extends JFrame{
 		label.setBounds(0, 0, w, h);
 		getLayeredPane().setLayout(null);
 		getLayeredPane().add(label, new Integer(Integer.MIN_VALUE));
-		//TODO Whether remove the default decorate
+		// Whether remove the default decorate
 //		this.setUndecorated(true);
 //		this.getRootPane().setWindowDecorationStyle(frameStyle);
 		//init components

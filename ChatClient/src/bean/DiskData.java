@@ -8,12 +8,16 @@ import java.io.Serializable;
  * Package of diskRecord.dat
  */
 public class DiskData implements Serializable{
-	private String userId;
-	private String psw;
+	private User user;
 	private String mode;//auto login /save userId / nothing
 	private String serverIp;
 	private String portNum;
 	
+	
+	public DiskData() {
+		user = new User();
+	}
+
 	public String getServerIp() {
 		return serverIp;
 	}
@@ -38,19 +42,12 @@ public class DiskData implements Serializable{
 		this.mode = mode;
 	}
 
-	public String getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
-
-	public String getPsw() {
-		return psw;
-	}
-
-	public void setPsw(String psw) {
-		this.psw = psw;
-	}
+	
 }

@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 import bean.ContactList;
 import bean.DiskData;
-import bean.User;
+import control.Control;
 import dao.SocketCommunicate;
 
 /**
@@ -16,35 +16,25 @@ import dao.SocketCommunicate;
  * Data translate object
  */
 public class Dto {
-	private User user;
 	private String receiverId;
 	private HashMap<String, JFrame> frameList;
 	private HashMap<String, JPanel> chatPanelList;
 	private HashMap<String, JComponent> componentList;
 	private ContactList contactList;
 	private SocketCommunicate sc;
-	private String mode;//auto login /save userId / "" 
-	private String serverIp;
-	private String portNum;
+	private DiskData diskData;
 	private boolean isRun;
+	private Control control;
 	
 	/**
 	 * Constructor
 	 */
-	public Dto() {
-		user = new User();
+	public Dto(Control control) {
 		contactList = new ContactList();
 		frameList = new HashMap<String, JFrame>();
 		chatPanelList = new HashMap<String, JPanel>();
 		componentList = new HashMap<String, JComponent>();
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
+		this.control = control;
 	}
 
 	public String getReceiverId() {
@@ -95,30 +85,6 @@ public class Dto {
 		this.sc = sc;
 	}
 
-	public String getMode() {
-		return mode;
-	}
-
-	public void setMode(String mode) {
-		this.mode = mode;
-	}
-
-	public String getServerIp() {
-		return serverIp;
-	}
-
-	public void setServerIp(String serverIp) {
-		this.serverIp = serverIp;
-	}
-
-	public String getPortNum() {
-		return portNum;
-	}
-
-	public void setPortNum(String portNum) {
-		this.portNum = portNum;
-	}
-
 	public boolean isRun() {
 		return isRun;
 	}
@@ -126,12 +92,15 @@ public class Dto {
 	public void setRun(boolean isRun) {
 		this.isRun = isRun;
 	}
+	
+	public DiskData getDiskData(){
+		return diskData;
+	}
+	public void setDiskData(DiskData diskData) {
+		this.diskData = diskData;
+	}
 
-	public void setDiskRecord(DiskData diskData) {
-		this.user.setUserId(diskData.getUserId());
-		this.user.setPsw(diskData.getPsw());
-		this.mode = diskData.getMode();
-		this.serverIp = diskData.getServerIp();
-		this.portNum = diskData.getPortNum();
+	public Control getControl() {
+		return control;
 	}
 }

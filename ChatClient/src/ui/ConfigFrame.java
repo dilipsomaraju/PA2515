@@ -21,5 +21,4 @@ public class ConfigFrame extends MyFrame {
 	public void paint(Graphics g) {
 		paintComponents(g);
 	}
-
 }

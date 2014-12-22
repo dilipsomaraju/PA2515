@@ -20,18 +20,19 @@ public class DataDisk implements Data{
 	
 	private final  String filePath;
 	
+	private DiskData dd;
 	/**
 	 * Constructor
 	 * @param param contains configuration of Disk
 	 */
 	public DataDisk(HashMap<String,String> param) {
 		this.filePath = param.get("path");
+		dd = new DiskData();
 	}
-	
+
 	@Override
 	public DiskData loadData() {
 		ObjectInputStream ois = null;
-		DiskData dd = new DiskData();
 		try {
 			//Get the file
 			File file = new File(filePath);

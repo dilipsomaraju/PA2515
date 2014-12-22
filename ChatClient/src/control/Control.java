@@ -21,7 +21,7 @@ import dto.Dto;
 public class Control {
 	private Dto dto;
 	
-	private final Data diskData;
+	private final Data dataDisk;
 
 	private ClientService clientService;
 
@@ -29,10 +29,10 @@ public class Control {
 	 * Constructor
 	 */
 	public Control() {
-		dto = new Dto();
+		dto = new Dto(this);
 		//Get local disk data
-		this.diskData = this.creatDataObject(RootConfig.getDataConfig().getDiskData());
-		this.dto.setDiskRecord(diskData.loadData());
+		this.dataDisk = this.creatDataObject(RootConfig.getDataConfig().getDiskData());
+		this.dto.setDiskData(dataDisk.loadData());
 		//Create SocketCommunicate object
 		dto.setSc(new SocketCommunicate());
 		clientService = new ClientService(dto,this);
@@ -71,9 +71,13 @@ public class Control {
 				if(frameCfg.getClassName().equals("ui.RegisterFrame"))
 					dto.getFrameList().put("RegisterFrame", f);
 				if(frameCfg.getClassName().equals("ui.AlterPswFrame"))
-				dto.getFrameList().put("AlterPswFrame", f);
+					dto.getFrameList().put("AlterPswFrame", f);
 				if(frameCfg.getClassName().equals("ui.ConfigFrame"))
 					dto.getFrameList().put("ConfigFrame", f);
+				if(frameCfg.getClassName().equals("ui.FindFrame"))
+					dto.getFrameList().put("FindFrame", f);
+				if(frameCfg.getClassName().equals("ui.InviteToGroupFrame"))
+					dto.getFrameList().put("InviteToGroupFrame", f);
 				f.setDto(dto);
 			}
 		} catch (Exception e) {
@@ -102,7 +106,7 @@ public class Control {
 	
 
 	public Data getDiskData() {
-		return diskData;
+		return dataDisk;
 	}
 
 	public Dto getDto() {

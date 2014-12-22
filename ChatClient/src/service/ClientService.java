@@ -15,18 +15,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import ui.ChatFrame;
+import ui.ChatPanel;
 import ui.Img;
 import ui.MainFrame;
 import bean.DiskData;
+import bean.Group;
 import bean.InitMSG;
 import bean.MSG;
 import bean.TextMSG;
+import bean.User;
 import control.Control;
 import dto.Dto;
 
 public class ClientService implements Service{
 	private Dto dto;
 	private Control control;
+	//DiskData
+	private DiskData dd;
+	private String mode;
+	private User user;
 	//connect parameter
 	private JTextField serverIp;
 	private JTextField portNum;
@@ -35,7 +43,6 @@ public class ClientService implements Service{
 	private JPasswordField psw;
 	private JCheckBox saveUserName;
 	private JCheckBox autoLogin;
-	private String mode;
 	//register parameter
 	private JTextField registerUserName;
 	private JPasswordField registerPsw;
@@ -48,6 +55,9 @@ public class ClientService implements Service{
 	private JPasswordField alterPsw;
 	private JPasswordField confirmAlterPsw;
 	private String answerString;
+	//config parameter
+	private JCheckBox configAutoLogin;
+	private JCheckBox configSaveUserName;
 	//msg got from server
 	private MSG msg;
 
@@ -57,6 +67,9 @@ public class ClientService implements Service{
 	public ClientService(Dto dto, Control control){
 		this.dto = dto;
 		this.control = control;
+		dd = dto.getDiskData();
+		mode = dd.getMode();
+		user = dd.getUser();
 	}
 
 	@Override
@@ -81,31 +94,12 @@ public class ClientService implements Service{
 		alterPswAnswer = ((JTextField)(dto.getComponentList().get("alterPswAnswer")));
 		alterPsw = ((JPasswordField)(dto.getComponentList().get("alterrPassword")));
 		confirmAlterPsw = ((JPasswordField)(dto.getComponentList().get("confirmAlterPassword")));
+		//Config Frame components
+		configSaveUserName = ((JCheckBox)(dto.getComponentList().get("configSaveUserName")));
+		configAutoLogin = ((JCheckBox)(dto.getComponentList().get("configAutoLogin")));
 		//Setting
-		serverIp.setText(dto.getServerIp());
-		portNum.setText(dto.getPortNum());
-		
-		mode = dto.getMode();
-		if(mode==null||mode.equals("")){
-			saveUserName.setSelected(false);
-			autoLogin.setSelected(false);
-		}
-		else if(mode.equals("saveUserName")){
-			saveUserName.setSelected(true);
-			autoLogin.setSelected(false);
-			if(dto.getUser() != null){
-				userId.setText(dto.getUser().getUserId());
-			}
-		}
-		else if(mode.equals("autoLogin")){
-			saveUserName.setSelected(true);
-			saveUserName.setEnabled(false);
-			autoLogin.setSelected(true);
-			if(dto.getUser() != null){
-				userId.setText(dto.getUser().getUserId());
-				psw.setText(dto.getUser().getPsw());
-			}
-		}
+		serverIp.setText(dto.getDiskData().getServerIp());
+		portNum.setText(dto.getDiskData().getPortNum());
 		
 		serverIp.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -137,22 +131,12 @@ public class ClientService implements Service{
 		
 		autoLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(autoLogin.isSelected()){
-					mode = "autoLogin";
-					saveUserName.setSelected(true);
-					saveUserName.setEnabled(false);
-				}
-				else{
-					saveUserName.setEnabled(true);
-					mode = "saveUserName";
-				}
+				
 			}
 		});
 		saveUserName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(saveUserName.isSelected())
-					mode = "saveUserName";
-				else mode = "";
+				
 			}
 		});
 	}
@@ -173,6 +157,36 @@ public class ClientService implements Service{
 				//Set oos & ois into dto
 				dto.getFrameList().get("ConnectFrame").setVisible(false);
 				dto.getFrameList().get("LoginFrame").setVisible(true);
+				if(mode.equals("") || mode == null){
+					saveUserName.setSelected(false);
+					autoLogin.setSelected(false);
+					configSaveUserName.setSelected(false);
+					configAutoLogin.setSelected(false);
+					userId.grabFocus();
+				}
+				else if(mode.equals("saveUserName")){
+					saveUserName.setSelected(true);
+					autoLogin.setSelected(false);
+					configSaveUserName.setSelected(true);
+					configAutoLogin.setSelected(false);
+					if(user != null){
+						userId.setText(user.getUserId());
+						psw.grabFocus();
+					}
+				}
+				else if(mode.equals("autoLogin")){
+					saveUserName.setSelected(true);
+					saveUserName.setEnabled(false);
+					autoLogin.setSelected(true);
+					configSaveUserName.setSelected(true);
+					configSaveUserName.setEnabled(false);
+					configAutoLogin.setSelected(true);
+					if(user != null){
+						userId.setText(user.getUserId());
+						psw.setText(user.getPsw());
+					}
+					else userId.grabFocus();
+				}
 				if(autoLogin.isSelected()){
 					login();
 				}
@@ -207,7 +221,7 @@ public class ClientService implements Service{
 	
 	@Override
 	public synchronized void register() {
-		if(registerUserName.getText().equals(""))
+		if(registerUserName.getText().equals("") || registerUserName.getText() == null)
 			JOptionPane.showMessageDialog(null,
 					"Please input your Nickname", "Warning", JOptionPane.WARNING_MESSAGE);
 		else if(new String(registerPsw.getPassword()).equals(""))
@@ -219,10 +233,10 @@ public class ClientService implements Service{
 		else if(!new String(registerConfirmPsw.getPassword()).equals(new String(registerPsw.getPassword())))
 			JOptionPane.showMessageDialog(null,
 					"The two passwords are not the same", "Warning", JOptionPane.WARNING_MESSAGE);
-		else if(question.getText().equals(""))
+		else if(question.getText().equals("") || question.getText() == null)
 			JOptionPane.showMessageDialog(null,
 					"Please input your question", "Warning", JOptionPane.WARNING_MESSAGE);
-		else if(answer.getText().equals(""))
+		else if(answer.getText().equals("") || answer.getText() == null)
 			JOptionPane.showMessageDialog(null,
 					"Please input your answer", "Warning", JOptionPane.WARNING_MESSAGE);
 		else{
@@ -286,25 +300,42 @@ public class ClientService implements Service{
 		MSG m =  dto.getSc().getMSG();
 		if(m.gettOM().equals("confirm")){
 			//save Disk data
-			DiskData dd = new DiskData();
 			dd.setMode(mode);
-			dd.setUserId(userId.getText());
+			user.setUserId(userId.getText());
 			if(!autoLogin.isSelected())
 				dd.setPortNum("");
-			dd.setPsw(new String(psw.getPassword()));
+			user.setPsw(new String(psw.getPassword()));
+			dd.setUser(user);
 			dd.setPortNum(portNum.getText());
 			dd.setServerIp(serverIp.getText());
 			control.getDiskData().saveData(dd);
-			//initialize contact list
-			initContactList();
+			//refresh contact list
+			dto.getSc().sendMSG(new MSG("","refreshContactList"));
 			dto.getFrameList().get("LoginFrame").setVisible(false);
 			dto.getFrameList().get("MainFrame").setVisible(true);
 			//Strat a listener Thread
 			dto.setRun(true);
-			new ListenerTread().start();
+			new ListenerTread(this).start();
 		}
 		else JOptionPane.showMessageDialog(null,
 				m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
+	}
+
+	@Override
+	public synchronized void refreshContactList(){
+		int index = 0;
+		if(((MainFrame)(dto.getFrameList().get("MainFrame"))).getTabPanel() != null){
+			index = ((MainFrame)(dto.getFrameList().get("MainFrame"))).getTabPanel().getSelectedIndex();
+		}
+		InitMSG initMsg = (InitMSG)(msg);
+		if(initMsg.getSenderId().equals("confirm")){
+			dto.setContactList(initMsg.getContactList());
+			//set contact list
+			((MainFrame)(dto.getFrameList().get("MainFrame"))).changeContactList(dto.getContactList());
+		}
+		else JOptionPane.showMessageDialog(null,
+				initMsg.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
+		((MainFrame)(dto.getFrameList().get("MainFrame"))).getTabPanel().setSelectedIndex(index);
 	}
 
 	@Override
@@ -327,7 +358,6 @@ public class ClientService implements Service{
 		}
 		return s;
 	}
-
 
 	@Override
 	public synchronized  void logout() {
@@ -403,7 +433,6 @@ public class ClientService implements Service{
 			((JLabel)(dto.getComponentList().get("tipLabel"))).setIcon(Img.getImgIcon("alter/tip.png"));
 	}
 
-
 	@Override
 	public synchronized void alterPsw(){
 		dto.getSc().sendMSG(new TextMSG(userId.getText(), "alterPsw", null, 
@@ -420,140 +449,246 @@ public class ClientService implements Service{
 	}
 	
 	@Override
-	public synchronized void initContactList(){
-		InitMSG initMsg = (InitMSG)(dto.getSc().getMSG());
-		dto.setContactList(initMsg.getContactList());
-		//set contact list
-		((MainFrame)(dto.getFrameList().get("MainFrame"))).changeContactList(dto.getContactList());
-	}
-	
-	@Override
 	public synchronized void sendTextMSG() {
-		// TODO Auto-generated method stub
+		// TODO sendTextMSG
 		
 	}
 
 	@Override
 	public synchronized void sendGroupTextMSG() {
-		// TODO Auto-generated method stub
+		// TODO sendGroupTextMSG
 		
 	}
 
 	@Override
 	public synchronized void sendFileMSG() {
-		// TODO Auto-generated method stub
+		// TODO sendFileMSG
 		
 	}
 
 	@Override
 	public synchronized void sendGroupFileMSG() {
-		// TODO Auto-generated method stub
+		// TODO sendGroupFileMSG
 		
 	}
 
 	@Override
 	public synchronized void getFile() {
-		// TODO Auto-generated method stub
+		// TODO getFile
+		
+	}
+
+	/**
+	 * Strar findFrame
+	 */
+	public void findFrame(){
+		//TODO find frame
+	}
+
+	@Override
+	public synchronized void find() {
+		// TODO find ids
 		
 	}
 
 	@Override
-	public synchronized void findById() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public synchronized void addFriend() {
-		// TODO Auto-generated method stub
-		
+	public synchronized void addFriend(String friendId) {
+		String givenName = JOptionPane.showInputDialog("Input the givenName");
+		dto.getSc().sendMSG(new TextMSG(friendId, "addFriend", null, givenName));
+		MSG m = dto.getSc().getMSG();
+		if(m.gettOM().equals("confirm"))
+			dto.getSc().sendMSG(new MSG("","refreshContactList"));
+		else JOptionPane.showMessageDialog(null, m.getSenderId(),"error",
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 	@Override
 	public synchronized void renameFriend() {
-		// TODO Auto-generated method stub
-		
+		popFeedback();
 	}
 
 	@Override
 	public synchronized void deleteFriend() {
-		// TODO Auto-generated method stub
-		
+		popFeedback();
 	}
 
-	@Override
-	public synchronized void inviteToGroup() {
-		// TODO Auto-generated method stub
+	public synchronized void inviteToGroupFrame() {
+		// TODO One of LAST TO IMPLEMENT
 		
+	}
+	
+	@Override
+	public synchronized void inviteToGroup(String groupId) {
+		// TODO One of LAST TO IMPLEMENT
+		
+	}
+	
+	public synchronized void isGroup(){
+		if(msg.getSenderId().equals("This group id is exist"))
+			JOptionPane.showMessageDialog(null,
+					msg.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
+		else {
+			String nickName = JOptionPane.showInputDialog("Input the Group nick name");
+			if(!nickName.equals("")){
+				String givenName = JOptionPane.showInputDialog("Input the Group given name");
+				if(!givenName.equals("")){
+					dto.getSc().sendMSG(new TextMSG(msg.getSenderId(),"createGroup",nickName,givenName));
+				}
+			}
+		}
 	}
 	
 	@Override
 	public synchronized void createGroup() {
-		// TODO Auto-generated method stub
-		
+		popFeedback();
 	}
 	
 	@Override
-	public synchronized void joinGroup() {
-		// TODO Auto-generated method stub
-		
+	public synchronized void addGroup(String groupId) {
+		String givenName = JOptionPane.showInputDialog("Input the givenName");
+		dto.getSc().sendMSG(new TextMSG(groupId, "addGroup", null, givenName));
+		MSG m = dto.getSc().getMSG();
+		if(m.gettOM().equals("confirm"))
+			dto.getSc().sendMSG(new MSG("","refreshContactList"));
+		else JOptionPane.showMessageDialog(null, m.getSenderId(),"error",
+				JOptionPane.ERROR_MESSAGE);
 	}
 	
 	@Override
 	public synchronized void renameGroup() {
-		// TODO Auto-generated method stub
-		
+		popFeedback();
 	}
 
 	@Override
 	public synchronized void deleteGroup() {
-		// TODO Auto-generated method stub
-		
+		popFeedback();
 	}
 
 	@Override
 	public synchronized void deleteGroupMember() {
-		// TODO Auto-generated method stub
+		// TODO LAST LAST to implement
 		
 	}
 	
 	@Override
 	public void textMSG(){
-		// TODO Auto-generated method stub
+		// TODO textMSG
 		
 	}
 	
 	@Override
 	public void groupTextMSG(){
-		// TODO Auto-generated method stub
+		// TODO groupTextMSG
 		
 	}
 	
 	@Override
 	public void fileMSG(){
-		// TODO Auto-generated method stub
+		// TODO fileMSG
 		
 	}
 	
 	@Override
 	public void groupFileMSG(){
-		// TODO Auto-generated method stub
+		// TODO groupFileMSG
 		
+	}
+	
+	/**
+	 * Start chat frame
+	 */
+	public void chatFrame(User user){
+		ChatFrame cf = (ChatFrame)(dto.getFrameList().get("ChatFrame"));
+		ChatPanel p = (ChatPanel) dto.getChatPanelList().get(user.getUserId());
+		if(p == null){
+			//if this id related panel do not exist, create a new one
+			p =new ChatPanel(null);
+			dto.getChatPanelList().put(user.getUserId(), p);
+		}
+		//ADD this panel into Chat Frame's tab panel
+		cf.addTabPanel(user.getGivenName(), p);			
+		//start Chat Frame
+		cf.setVisible(true);
+	}
+	
+	/**
+	 * Start chat frame
+	 */
+	public void chatFrame(Group group){
+		ChatFrame cf = (ChatFrame)(dto.getFrameList().get("ChatFrame"));
+		ChatPanel p = (ChatPanel) dto.getChatPanelList().get("g"+group.getGroupId());
+		if(p == null){
+			//if this id related panel do not exist, create a new one
+			p =new ChatPanel(null);
+			dto.getChatPanelList().put("g"+group.getGroupId(), p);
+		}
+		//ADD this panel into Chat Frame's tab panel
+		cf.addTabPanel(group.getGivenName(), p);
+		//start Chat Frame
+		cf.setVisible(true);
 	}
 	
 	/**
 	 * Strar configFrame
 	 */
 	public void configFrame(){
-//		dto.
+		dto.getFrameList().get("ConfigFrame").setVisible(true);
 	}
 	
-	/**
-	 * Strar findFrame
-	 */
-	public void findFrame(){
-		
+	public void saveUserName() {
+		if(saveUserName.isSelected())
+			mode = "saveUserName";
+		else mode = "";
+		dd.setMode(mode);
 	}
+	
+	public void autoLogin() {
+		if(autoLogin.isSelected()){
+			mode = "autoLogin";
+			saveUserName.setSelected(true);
+			saveUserName.setEnabled(false);
+		}
+		else{
+			saveUserName.setEnabled(true);
+			mode = "saveUserName";
+		}
+		dd.setMode(mode);
+	}
+	
+	public void configSaveUserName() {
+		if(configSaveUserName.isSelected())
+			mode = "saveUserName";
+		else mode = "";
+		dd.setMode(mode);
+		control.getDiskData().saveData(dd);
+	}
+	
+	public void configAutoLogin() {
+		if(configAutoLogin.isSelected()){
+			mode = "autoLogin";
+			configSaveUserName.setSelected(true);
+			configSaveUserName.setEnabled(false);
+		}
+		else{
+			configSaveUserName.setEnabled(true);
+			mode = "saveUserName";
+		}
+		dd.setMode(mode);
+		control.getDiskData().saveData(dd);
+	}
+	
+	
+	public MSG getMsg() {
+		return msg;
+	}
+	private void popFeedback(){
+		if(msg.getSenderId().equals("confirm"))
+			dto.getSc().sendMSG(new MSG("","refreshContactList"));
+		else JOptionPane.showMessageDialog(null, msg.getSenderId(),"error",
+				JOptionPane.ERROR_MESSAGE);		
+	}
+	//Unused methods
+	public void tipLabel() {}
 	
 	/**
 	 * @author SuperSun
@@ -561,25 +696,27 @@ public class ClientService implements Service{
 	 * A thread for monitoring server msg
 	 */
 	private class ListenerTread extends Thread{
+		private ClientService clientService;
+		public ListenerTread(ClientService clientService){
+			this.clientService = clientService;
+		}
 		public synchronized void run(){
 			try {
 				while(dto.isRun()){
 					msg = dto.getSc().getMSG();
-					if(msg != null)
+					if(msg != null){
 						try {
-							this.getClass().getMethod(msg.gettOM()).invoke(this);
+							clientService.getClass().getMethod(msg.gettOM()).invoke(clientService);
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 						sleep(100);
+					}
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	//Unused methods
-	public void saveUserName() {}
-	public void autoLogin() {}
-	public void tipLabel() {}
+
 }

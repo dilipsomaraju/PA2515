@@ -66,9 +66,9 @@ public interface Service {
 	public void logout();
 	
 	/**
-	 * get this user's contact list, initialize main panle
+	 * get this user's contact list, refresh main panle
 	 */
-	public void initContactList();
+	public void refreshContactList();
 	
 	/**
 	 * send message
@@ -98,12 +98,12 @@ public interface Service {
 	/**
 	 * find user/group by id
 	 */
-	public void findById();
+	public void find();
 	
 	/**
 	 * add friend
 	 */
-	public void addFriend();
+	public void addFriend(String friendId);
 	
 	/**
 	 * rename friend
@@ -118,12 +118,12 @@ public interface Service {
 	/**
 	 * invite friends to join a group
 	 */
-	public void inviteToGroup();
+	public void inviteToGroup(String groupId);
 	
 	/**
 	 * add group
 	 */
-	public void joinGroup();
+	public void addGroup(String groupId);
 	
 	/**
 	 * create a group
