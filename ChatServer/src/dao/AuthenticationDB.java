@@ -4,28 +4,33 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-
-import bean.ContactList;
-import bean.Group;
 import bean.User;
 
 public class AuthenticationDB {
 	//SQL statements
 	private static String GET_USER_SQL = "select * from userInfo where userId=?";
-	private static String GET_LOGGED_USERS_SQL = "select userInfo.userId,givenName,status,nickName from contactInfo,userInfo " +
-			"where contactInfo.userId=? and status='1' and userInfo.userId=contactInfo.userIds;";
+	private static String INIT_DB_SQL = "update userInfo set status='0'";
 	private static String SET_STATUS_SQL = "update userInfo set status=? where userId=?";
 	private static String ALTER_PSW_SQL = "update userInfo set psw=? where userId=?";
 	private static String INSERT_USER_SQL = "insert into userInfo(userId,psw,nickName" +
 			",status,question,answer) VALUES(?,?,?,?,?,?)";
-	private static String GET_LOGGED_GROUP_MEMBERS_SQL = "select userIds from groupInfo,userInfo where userId=userIds and status='1' and groupId=?";
 	private static String CHECK_USER_RIGHT_SQL = "select right from groupInfo where groupId=? and userId=?";
-	private static String GET_GROUP_CONTACT_SQL = "select groupId,nickName,givenName from groupInfo where userIds=?";
 
 /////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Initialize Database when start Server
+	 */
+	public static void initDB(){
+		Connection conn = DB.getConn();
+		PreparedStatement stmt = DB.getStmt(conn, INIT_DB_SQL);
+		try {
+			stmt.execute();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally{
+			DB.closeDB(stmt, conn);
+		}
+	}
 	
 	/**
 	 * Get all attributes of a user whose id is userId
@@ -107,8 +112,10 @@ public class AuthenticationDB {
 	 */
 	public static boolean checkLogin(String userId, String psw){
 		User user = getUser(userId);
-		if(user != null && user.getPsw().equals(psw))
+		if(user != null && user.getPsw().equals(psw) && user.getStatus() == 0){
+			setStatus(userId, 1);
 			return true;
+		}
 		return false;
 	}
 
@@ -144,8 +151,8 @@ public class AuthenticationDB {
 		Connection conn = DB.getConn();
 		PreparedStatement stmt = DB.getStmt(conn, ALTER_PSW_SQL);
 		try {
-			stmt.setString(1, psw);
 			stmt.setString(2, userId);
+			stmt.setString(1, psw);
 			stmt.execute();
 			return true;
 		} catch (SQLException e) {
@@ -156,55 +163,6 @@ public class AuthenticationDB {
 		}
 	}
 
-	/**
-	 * Get user's contactList (only logged in users and groups)
-	 * @param userId
-	 * here the two givenName, one is for friends, one is for groups
-	 * User: userId,givenName,status,nickName
-	 * group:groupId,nickName,givenName
-	 * @return contact list if successed, or return null
-	 */
-	public static ContactList getContactList(String userId){
-		Connection conn = DB.getConn();
-		PreparedStatement stmt = DB.getStmt(conn, GET_LOGGED_USERS_SQL);
-		ResultSet rs = null;
-		ContactList contactList = new ContactList();
-		Vector<User> users = new Vector<User>();
-		Vector<Group> groups = new Vector<Group>();
-		try {
-			stmt.setString(1, userId);
-			rs = DB.getRs(stmt);
-			while(rs.next()){
-				User user = new User();
-				user.setUserId(rs.getString(1));
-				user.setGivenName(rs.getString(2));
-				user.setStatus(rs.getInt(3));
-				user.setNickName(rs.getString(4));
-				// Only display logged user
-				if(user.getStatus() == 1)
-					users.add(user);
-			}
-			stmt = DB.getStmt(conn, GET_GROUP_CONTACT_SQL);
-			stmt.setString(1, userId);
-			rs = DB.getRs(stmt);
-			while(rs.next()){
-				Group group = new Group();
-				group.setGroupId(rs.getString(1));
-				group.setNickName(rs.getString(2));
-				group.setGivenName(rs.getString(3));
-				groups.add(group);
-			}
-			contactList.setUsers(users);
-			contactList.setGroups(groups);
-			return contactList;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}finally{
-			DB.closeDB(rs, stmt, conn);
-		}
-	}
-	
 	/**
 	 * Check whether this user has right to edit this group
 	 * @param groupId
@@ -231,51 +189,14 @@ public class AuthenticationDB {
 	}
 
 	/**
-	 * Get logged users' userId of a group
-	 * @param groupId
-	 * @return logged groupmembers' userId if successed, or return null
-	 */
-	public static List<String> getLoggedGroupMemberNames(String groupId){
-		List<String> members = new ArrayList<String>();
-		Connection conn = DB.getConn();
-		PreparedStatement stmt = DB.getStmt(conn, GET_LOGGED_GROUP_MEMBERS_SQL);
-		ResultSet rs = null;
-		try {
-			stmt.setString(1, groupId);
-			rs = DB.getRs(stmt);
-			while(rs.next())
-				members.add(rs.getString(1));
-			return members;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}finally{
-			DB.closeDB(rs, stmt, conn);
-		}
-	}
-
-	/**
-	 * Get logged friends' userId of one user
 	 * @param userId
-	 * @return logged friends' userId if successed, or return null
+	 * @return userNickName
 	 */
-	public static List<String> getLoggedFriendNames(String userId){
-		List<String> names = new ArrayList<String>();
-		Connection conn = DB.getConn();
-		PreparedStatement stmt = DB.getStmt(conn, GET_LOGGED_USERS_SQL);
-		ResultSet rs = null;
-		try {
-			stmt.setString(1, userId);
-			rs = DB.getRs(stmt);
-			while(rs.next())
-				names.add(rs.getString(1));
-			return names;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}finally{
-			DB.closeDB(rs, stmt, conn);
-		}
+	public static String getUserNickName(String userId){
+		User user = getUser(userId);
+		if(user != null)
+			return user.getNickName();
+		return "";
 	}
 
 //	public static void main(String[] args) {

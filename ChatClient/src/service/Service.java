@@ -71,26 +71,6 @@ public interface Service {
 	public void refreshContactList();
 	
 	/**
-	 * send message
-	 */
-	public void sendTextMSG();
-	
-	/**
-	 * send group message
-	 */
-	public void sendGroupTextMSG();
-	
-	/**
-	 * send file message
-	 */
-	public void sendFileMSG();
-	
-	/**
-	 * send group file message
-	 */
-	public void sendGroupFileMSG();
-	
-	/**
 	 * require file from server by using the link sent by server
 	 */
 	public void getFile();
@@ -103,7 +83,7 @@ public interface Service {
 	/**
 	 * add friend
 	 */
-	public void addFriend(String friendId);
+	public void addFriend();
 	
 	/**
 	 * rename friend
@@ -123,7 +103,7 @@ public interface Service {
 	/**
 	 * add group
 	 */
-	public void addGroup(String groupId);
+	public void addGroup();
 	
 	/**
 	 * create a group

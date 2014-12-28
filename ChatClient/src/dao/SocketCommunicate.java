@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 import bean.IO;
 import bean.MSG;
 
@@ -37,8 +39,10 @@ public class SocketCommunicate implements Communicate{
 		try {
 			msg = (MSG)(io.getOis().readObject());
 		} catch (Exception e) {
-			//TODO to be delete
-//			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,"System Crashed or Server closed","error",
+					JOptionPane.ERROR_MESSAGE);
+			sendMSG(new MSG(null,"logout"));
+			System.exit(0);
 			return null;
 		}
 		return msg;

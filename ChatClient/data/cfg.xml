@@ -66,19 +66,25 @@
 		<frame className = "ui.ConfigFrame" path = "login/loginFrame.jpg" title = "Configuration" x = "0" y = "0" w = "540" h = "411" frameStyle = "1">
 			<component className = "javax.swing.JCheckBox" value = "configSaveUserName" path = "Remember userName" x = "162" y = "309" w = "150" h = "18"/>
 			<component className = "javax.swing.JCheckBox" value = "configAutoLogin" path = "Auto login" x = "310" y = "309" w = "100" h = "18"/>
-			<component className = "javax.swing.JButton" value = "alterPswFrame" path = "login/forgetPassword.png" x = "408" y = "280" w = "100" h = "20"/>
 		</frame>
 		
 		<frame className = "ui.FindFrame" path = "" title = "Find" x = "30" y = "30" w = "285" h = "500" frameStyle = "1">
-			<component className = "javax.swing.JButton" value = "" path = "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
+			<component className = "javax.swing.JLabel" value = "" path = "" x = "25" y = "100" w = "60" h = "20"/>
+			<component className = "javax.swing.JRadioButton" value = "findUser" path = "User" x = "95" y = "100" w = "60" h = "20"/>
+			<component className = "javax.swing.JRadioButton" value = "findGroup" path = "Group" x = "165" y = "100" w = "60" h = "20"/>
+			<component className = "javax.swing.JLabel" value = "" path = "" x = "25" y = "130" w = "60" h = "20"/>
+			<component className = "javax.swing.JRadioButton" value = "findId" path = "Id" x = "95" y = "130" w = "60" h = "20"/>
+			<component className = "javax.swing.JRadioButton" value = "findNickName" path = "Nick Name" x = "165" y = "130" w = "60" h = "20"/>
+			<component className = "javax.swing.JLabel" value = "" path = "" x = "25" y = "160" w = "60" h = "20"/>
+			<component className = "javax.swing.JTextField" value = "clue" path = "" x = "95" y = "160" w = "60" h = "20"/>
+			<component className = "javax.swing.JButton" value = "find" path = "" x = "165" y = "160" w = "60" h = "25"/>
 		</frame>
 		
-		<frame className = "ui.ChatFrame" path = "" title = "Chat" x = "30" y = "30" w = "285" h = "500" frameStyle = "1">
-			<component className = "javax.swing.JTabbedPane" value = "chatTabPanel" path = "" x = "0" y = "102" w = "250" h = "342"/>
+		<frame className = "ui.ChatFrame" path = "chat/form.jpg" title = "Chat" x = "0" y = "0" w = "707" h = "626" frameStyle = "1">
+			<component className = "javax.swing.JTabbedPane" value = "chatTabPanel" path = "" x = "1" y = "138" w = "700" h = "458"/>
 		</frame>
 		
 		<frame className = "ui.InviteToGroupFrame" path = "" title = "Invite to group" x = "30" y = "30" w = "285" h = "500" frameStyle = "1">
-			<component className = "javax.swing.JButton" value = "" path = "login/logo.png" x = "172" y = "74" w = "174" h = "76"/>
 		</frame>
 	</ui>	
 	

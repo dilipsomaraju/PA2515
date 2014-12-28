@@ -17,6 +17,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 
 //import com.sun.awt.AWTUtilities;
@@ -101,9 +102,8 @@ abstract public class MyFrame extends JFrame{
 	protected void createFrame() {
 		this.setTitle(title);
 		this.setBounds(x, y, w, h);
-		panel = new JPanel();
+		panel = new JPanel(null);
 		panel.setOpaque(false);
-		panel.setLayout(null);
 		//Set Backgroud graphic
 		JLabel label = new JLabel(Img.getImgIcon(framePath));
 		label.setBounds(0, 0, w, h);
@@ -189,6 +189,12 @@ abstract public class MyFrame extends JFrame{
 							}
 						}
 					});
+				}
+				
+//===================================== JRadioButton =============================================================================
+				else if(cCfg.getClassName().equals("javax.swing.JRadioButton")){
+					((JRadioButton)c).setText(cCfg.getPath());
+					c.setOpaque(false);
 				}
 //===============================================================================================
 				control.getDto().getComponentList().put(cCfg.getValue(), c);

@@ -10,31 +10,49 @@ package bean;
  * sendId is the message(content) sender
  */
 public class MessageMSG extends MSG{
+	private String receiverId;
 	private String text;
 	private String link;
 	private String time;
+	private String senderNickName;
 	
-	/**
-	 * Constructor
-	 */
-	public MessageMSG() {
-		super();
-	}
 
 	/**
 	 * Constructor
 	 * @param senderId
 	 * @param toM
+	 * @param receiverId
 	 * @param text
 	 * @param link
 	 * @param time
 	 */
-	public MessageMSG(String senderId, String toM, String text, String link,
-			String time) {
+	public MessageMSG(String senderId, String toM,String receiverId, String text, String link,
+			String time, String senderNickName) {
 		super(senderId, toM);
+		this.receiverId = receiverId;
 		this.text = text;
 		this.link = link;
 		this.time = time;
+		this.senderNickName = senderNickName;
+	}
+
+	
+	public String getSenderNickName() {
+		return senderNickName;
+	}
+
+
+	public void setSenderNickName(String senderNickName) {
+		this.senderNickName = senderNickName;
+	}
+
+
+	public String getReceiverId() {
+		return receiverId;
+	}
+
+	public void setReceiverId(String receiverId) {
+		this.receiverId = receiverId;
 	}
 
 	public String getText() {

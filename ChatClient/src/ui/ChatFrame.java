@@ -8,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
 import config.FrameConfig;
 import control.Control;
 
@@ -51,14 +50,14 @@ public class ChatFrame extends MyFrame{
 		});
 	}
 	
-	public void addTabPanel(String givenName, JPanel panel){
+	public void addTabPanel(String givenName, ChatPanel panel){
 		tabPanel = (JTabbedPane) dto.getComponentList().get("chatTabPanel");
-		tabPanel. setTabPlacement(JTabbedPane.RIGHT);
-		tabPanel.addTab(givenName, panel);
+		tabPanel. setTabPlacement(JTabbedPane.LEFT);
+		tabPanel.addTab(formattStr(givenName), panel);
 	}
 	
-	public JTabbedPane getTabPamel(){
-		tabPanel = (JTabbedPane) dto.getComponentList().get("chatTabPanel");
+	public JTabbedPane getTabPanel(){
+		tabPanel = (JTabbedPane) (dto.getComponentList().get("chatTabPanel"));
 		return tabPanel;
 	}
 	
@@ -71,5 +70,11 @@ public class ChatFrame extends MyFrame{
 	public void paint(Graphics g) {
 		paintComponents(g);
 	}
-
+	
+	private String formattStr(String str){
+		String s = str;
+		while(s.length() < 18)
+			s = ">"+s;
+		return s;
+	}
 }

@@ -8,4 +8,10 @@ public class Time {
 		String time = sDateFormat.format(new java.util.Date()); 
 		return time;
 	}
+	public static String getTime(String time){
+		String str = time.replace("-","");
+		str = str.replace(":","");
+		str = str.replace(" ","");
+		return str;
+	}
 }

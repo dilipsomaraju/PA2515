@@ -8,6 +8,8 @@ import javax.swing.JPanel;
 
 import bean.ContactList;
 import bean.DiskData;
+import bean.Group;
+import bean.User;
 import control.Control;
 import dao.SocketCommunicate;
 
@@ -19,12 +21,15 @@ public class Dto {
 	private String receiverId;
 	private HashMap<String, JFrame> frameList;
 	private HashMap<String, JPanel> chatPanelList;
+	private HashMap<String, User> idUser;
+	private HashMap<String, Group> idGroup;
 	private HashMap<String, JComponent> componentList;
 	private ContactList contactList;
 	private SocketCommunicate sc;
 	private DiskData diskData;
 	private boolean isRun;
 	private Control control;
+	private String findFlag;
 	
 	/**
 	 * Constructor
@@ -34,9 +39,27 @@ public class Dto {
 		frameList = new HashMap<String, JFrame>();
 		chatPanelList = new HashMap<String, JPanel>();
 		componentList = new HashMap<String, JComponent>();
+		idUser = new HashMap<String, User>();
+		idGroup = new HashMap<String, Group>();
 		this.control = control;
 	}
+	
+	public String getFindFlag() {
+		return findFlag;
+	}
 
+	public void setFindFlag(String findFlag) {
+		this.findFlag = findFlag;
+	}
+
+	public HashMap<String, User> getIdUser() {
+		return idUser;
+	}
+
+	public HashMap<String, Group> getIdGroup() {
+		return idGroup;
+	}
+	
 	public String getReceiverId() {
 		return receiverId;
 	}
@@ -49,24 +72,12 @@ public class Dto {
 		return frameList;
 	}
 
-	public void setFrameList(HashMap<String, JFrame> frameList) {
-		this.frameList = frameList;
-	}
-
 	public HashMap<String, JPanel> getChatPanelList() {
 		return chatPanelList;
 	}
 
-	public void setChatPanelList(HashMap<String, JPanel> chatPanelList) {
-		this.chatPanelList = chatPanelList;
-	}
-
 	public HashMap<String, JComponent> getComponentList() {
 		return componentList;
-	}
-
-	public void setComponentList(HashMap<String, JComponent> componentList) {
-		this.componentList = componentList;
 	}
 
 	public ContactList getContactList() {

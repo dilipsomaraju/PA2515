@@ -127,6 +127,12 @@ public class MainFrame extends MyFrame{
 		tabPanel.setBorder(null);
 		tabPanel.addTab("Friend", userPanel);
 		tabPanel.addTab("Group", groupPanel);
+		//Set userId - userGivenName
+		for(User u : contactlist.getUsers())
+			dto.getIdUser().put(u.getUserId(), u);
+		
+		for(Group g : contactlist.getGroups())
+			dto.getIdGroup().put(g.getGroupId(), g);
 		
 		//Add MouseListener for contactList
 		userList.addMouseListener(new MouseAdapter() {
@@ -140,6 +146,9 @@ public class MainFrame extends MyFrame{
 					if(e.getButton() == 1 && e.getClickCount()==2){
 						dto.getControl().getClientService().chatFrame(((User)userList.getSelectedValue()));
 						dto.getFrameList().get("ChatFrame").setExtendedState(JFrame.NORMAL);
+						ChatPanel p = (ChatPanel) dto.getChatPanelList().get(((User)userList.getSelectedValue()).getUserId());
+						JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+						tab.setSelectedComponent(p);
 					}
 					else if(e.getButton() == 3 && userList.getSelectedIndex() >= 0){
 						userPopMenu = new MyPopupMenu(((User)userList.getSelectedValue()), dto);
@@ -169,6 +178,9 @@ public class MainFrame extends MyFrame{
 					if(e.getButton() == 1 && e.getClickCount()==2){
 						dto.getControl().getClientService().chatFrame(((Group)groupList.getSelectedValue()));
 						dto.getFrameList().get("ChatFrame").setExtendedState(JFrame.NORMAL);
+						ChatPanel p = (ChatPanel) dto.getChatPanelList().get("g"+((Group)groupList.getSelectedValue()).getGroupId());
+						JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+						tab.setSelectedComponent(p);
 					}
 					else if(e.getButton() == 3 && groupList.getSelectedIndex() >= 0){
 						groupPopMenu = new MyPopupMenu(((Group)groupList.getSelectedValue()), dto);
@@ -191,10 +203,6 @@ public class MainFrame extends MyFrame{
 	
 	public JTabbedPane getTabPanel() {
 		return tabPanel;
-	}
-
-	public MyScrollPane getGroupPanel() {
-		return groupPanel;
 	}
 
 	@Override

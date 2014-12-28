@@ -4,25 +4,39 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
+import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import ui.ChatFrame;
+import ui.FindFrame;
 import ui.ChatPanel;
 import ui.Img;
 import ui.MainFrame;
 import bean.DiskData;
+import bean.FileMSG;
 import bean.Group;
 import bean.InitMSG;
+import bean.InviteToGroupMSG;
 import bean.MSG;
+import bean.MessageMSG;
 import bean.TextMSG;
 import bean.User;
 import control.Control;
@@ -58,8 +72,16 @@ public class ClientService implements Service{
 	//config parameter
 	private JCheckBox configAutoLogin;
 	private JCheckBox configSaveUserName;
+	//find parameter
+	private JRadioButton findUser;
+	private JRadioButton findGroup;
+	private JRadioButton findId;
+	private JRadioButton findNickName;
+	private JTextField clue;
 	//msg got from server
 	private MSG msg;
+	//flag
+	private static boolean notice = true;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,9 +119,23 @@ public class ClientService implements Service{
 		//Config Frame components
 		configSaveUserName = ((JCheckBox)(dto.getComponentList().get("configSaveUserName")));
 		configAutoLogin = ((JCheckBox)(dto.getComponentList().get("configAutoLogin")));
+		//find Frame compenents
+		findUser = (JRadioButton) dto.getComponentList().get("findUser");
+		findGroup = (JRadioButton) dto.getComponentList().get("findGroup");
+		findId = (JRadioButton) dto.getComponentList().get("findId");
+		findNickName = (JRadioButton) dto.getComponentList().get("findNickName");
+		clue = ((JTextField)(dto.getComponentList().get("clue")));
 		//Setting
 		serverIp.setText(dto.getDiskData().getServerIp());
 		portNum.setText(dto.getDiskData().getPortNum());
+		ButtonGroup bg1 = new ButtonGroup();
+		bg1.add(findUser);
+		bg1.add(findGroup);
+		findUser.setSelected(true);
+		ButtonGroup bg2 = new ButtonGroup();
+		bg2.add(findId);
+		bg2.add(findNickName);
+		findId.setSelected(true);
 		
 		serverIp.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
@@ -374,6 +410,21 @@ public class ClientService implements Service{
 			e.printStackTrace();
 		}
 	}
+	
+	public synchronized void broadcast(){
+		TextMSG textMSG = (TextMSG)msg;
+		JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+		ChatPanel cp = (ChatPanel) dto.getChatPanelList().get(textMSG.getSenderId());
+		int index = tab.getSelectedIndex();
+		if(textMSG.getText().equals("logout") && cp != null){
+			int i = tab.indexOfComponent(cp);
+			if(i == -1) return;
+			tab.remove(cp);
+		}
+		//refresh contact list
+		dto.getSc().sendMSG(new MSG("","refreshContactList"));
+		tab.setSelectedIndex(index);
+	}
 
 	@Override
 	public synchronized void alterPswFrame(){
@@ -448,150 +499,291 @@ public class ClientService implements Service{
 					m.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	@Override
-	public synchronized void sendTextMSG() {
-		// TODO sendTextMSG
-		
-	}
-
-	@Override
-	public synchronized void sendGroupTextMSG() {
-		// TODO sendGroupTextMSG
-		
-	}
-
-	@Override
-	public synchronized void sendFileMSG() {
-		// TODO sendFileMSG
-		
-	}
-
-	@Override
-	public synchronized void sendGroupFileMSG() {
-		// TODO sendGroupFileMSG
-		
-	}
-
-	@Override
-	public synchronized void getFile() {
-		// TODO getFile
-		
-	}
 
 	/**
 	 * Strar findFrame
 	 */
 	public void findFrame(){
-		//TODO find frame
+		dto.getFrameList().get("FindFrame").setVisible(true);
 	}
 
 	@Override
 	public synchronized void find() {
-		// TODO find ids
+		String clue = this.clue.getText();
+		if(clue.equals("")){
+			JOptionPane.showMessageDialog(null,
+					"Please input a clue", "Warning", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		String tableName = null;
+		String attribute = null;
+		if(findUser.isSelected()){
+			if(clue.equals(userId.getText())){
+				JOptionPane.showMessageDialog(null,
+						"Why find yourself?", "Warning", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			tableName = "userInfo";
+			attribute = "userId";
+			dto.setFindFlag("user");
+		}
 		
+		else{
+			tableName = "groupInfo";
+			attribute = "groupId";
+			dto.setFindFlag("group");
+		}
+		if(findNickName.isSelected()) attribute = "nickName";
+		TextMSG textMSG = new TextMSG(tableName,"find",attribute,clue);
+		dto.getSc().sendMSG(textMSG);
 	}
 
+	public synchronized void changeFindList(){
+		InviteToGroupMSG imsg = (InviteToGroupMSG)msg;
+		if(imsg.getSenderId().equals("confirm")){
+			((FindFrame)(dto.getFrameList().get("FindFrame"))).changeResultList((Vector<String>) imsg.getReceiverIds());
+		}
+		else
+			JOptionPane.showMessageDialog(null,
+					imsg.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
+	}
+	
 	@Override
-	public synchronized void addFriend(String friendId) {
-		String givenName = JOptionPane.showInputDialog("Input the givenName");
-		dto.getSc().sendMSG(new TextMSG(friendId, "addFriend", null, givenName));
-		MSG m = dto.getSc().getMSG();
-		if(m.gettOM().equals("confirm"))
-			dto.getSc().sendMSG(new MSG("","refreshContactList"));
-		else JOptionPane.showMessageDialog(null, m.getSenderId(),"error",
-				JOptionPane.ERROR_MESSAGE);
+	public synchronized void addFriend() {
+		popFeedback(false);
 	}
 
 	@Override
 	public synchronized void renameFriend() {
-		popFeedback();
+		popFeedback(true);
 	}
 
 	@Override
 	public synchronized void deleteFriend() {
-		popFeedback();
+		popFeedback(false);
 	}
 
-	public synchronized void inviteToGroupFrame() {
-		// TODO One of LAST TO IMPLEMENT
-		
-	}
-	
-	@Override
-	public synchronized void inviteToGroup(String groupId) {
-		// TODO One of LAST TO IMPLEMENT
-		
-	}
-	
 	public synchronized void isGroup(){
 		if(msg.getSenderId().equals("This group id is exist"))
 			JOptionPane.showMessageDialog(null,
 					msg.getSenderId(), "ERROR", JOptionPane.ERROR_MESSAGE);
 		else {
-			String nickName = JOptionPane.showInputDialog("Input the Group nick name");
-			if(!nickName.equals("")){
-				String givenName = JOptionPane.showInputDialog("Input the Group given name");
-				if(!givenName.equals("")){
-					dto.getSc().sendMSG(new TextMSG(msg.getSenderId(),"createGroup",nickName,givenName));
-				}
+			String nickName = "";
+			while(nickName.equals("")){
+				nickName = JOptionPane.showInputDialog("Input the Group nick name\n16 characters limited");
+				if(nickName.length() > 16)
+					nickName = "";
 			}
+			String givenName = "";
+			while(givenName.equals("")){
+				givenName = JOptionPane.showInputDialog("Input the Group given name\n16 characters limited");
+				if(givenName.length() > 16)
+					givenName = "";
+			}
+			dto.getSc().sendMSG(new TextMSG(msg.getSenderId(),"createGroup",nickName,givenName));
 		}
 	}
 	
 	@Override
 	public synchronized void createGroup() {
-		popFeedback();
+		popFeedback(false);
 	}
 	
 	@Override
-	public synchronized void addGroup(String groupId) {
-		String givenName = JOptionPane.showInputDialog("Input the givenName");
-		dto.getSc().sendMSG(new TextMSG(groupId, "addGroup", null, givenName));
-		MSG m = dto.getSc().getMSG();
-		if(m.gettOM().equals("confirm"))
-			dto.getSc().sendMSG(new MSG("","refreshContactList"));
-		else JOptionPane.showMessageDialog(null, m.getSenderId(),"error",
-				JOptionPane.ERROR_MESSAGE);
+	public synchronized void addGroup() {
+		popFeedback(false);
 	}
 	
 	@Override
 	public synchronized void renameGroup() {
-		popFeedback();
+		popFeedback(true);
 	}
 
 	@Override
 	public synchronized void deleteGroup() {
-		popFeedback();
+		popFeedback(false);
 	}
 
+	
 	@Override
-	public synchronized void deleteGroupMember() {
-		// TODO LAST LAST to implement
+	public synchronized void textMSG(){
+		boolean isSender = false;
+		MessageMSG mmsg = (MessageMSG)msg;
+		//Get friend id
+		String userId = null;
+		if(mmsg.getSenderId().equals(user.getUserId())){
+			userId = mmsg.getReceiverId();
+			isSender = true;
+		}
+		else if(mmsg.getReceiverId().equals(user.getUserId())){
+			userId = mmsg.getSenderId();
+			isSender = false;
+		}
+		
+		//If this panel didn't selected or exist, Notice
+		JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+		ChatPanel cp = (ChatPanel) dto.getChatPanelList().get(userId);
+		if(cp == null){
+			cp =new ChatPanel(dto.getIdUser().get(userId),dto);
+			//Set groupId - chatPanel
+			dto.getChatPanelList().put(userId, cp);
+		}
+		cp.addMSG(mmsg.getSenderNickName(), mmsg.getTime(), mmsg.getText(), isSender);
+		int index = tab.indexOfComponent(cp);
+		if(index == tab.getSelectedIndex() && index != -1){
+			((ChatFrame)(dto.getFrameList().get("ChatFrame"))).setExtendedState(JFrame.NORMAL);
+			((ChatFrame)(dto.getFrameList().get("ChatFrame"))).setVisible(true);
+			return;
+		}
+		if(notice){
+			notice = false;
+			String givenName = dto.getIdUser().get(userId).getGivenName();
+			int i = JOptionPane.showConfirmDialog(null,
+					"Friend: '" + givenName +"' have some unread messages", "New Message",
+					JOptionPane.YES_OPTION);
+			if(i == -1 || i ==0)
+				notice = true;
+		}
+	}
+	
+	@Override
+	public synchronized void groupTextMSG(){
+		boolean isSender = false;
+		MessageMSG mmsg = (MessageMSG)msg;
+		//Get group id
+		String groupId = mmsg.getReceiverId();
+		if(mmsg.getSenderId().equals(user.getUserId()))
+			isSender = true;
+		else 
+			isSender = false;
+		//If this panel didn't selected or exist, Notice
+		JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+		ChatPanel cp = (ChatPanel) dto.getChatPanelList().get("g"+groupId);
+		if(cp == null){
+			cp =new ChatPanel(dto.getIdGroup().get(groupId),dto);
+			//Set groupId - chatPanel
+			dto.getChatPanelList().put("g"+groupId, cp);
+		}
+		
+		cp.addMSG(mmsg.getSenderNickName(), mmsg.getTime(), mmsg.getText(), isSender);
+		int index = tab.indexOfComponent(cp);
+		if(index == tab.getSelectedIndex() && index != -1){
+			((ChatFrame)(dto.getFrameList().get("ChatFrame"))).setExtendedState(JFrame.NORMAL);
+			((ChatFrame)(dto.getFrameList().get("ChatFrame"))).setVisible(true);
+			return;
+		}
+		if(notice){
+			notice = false;
+			String givenName = dto.getIdGroup().get(groupId).getGivenName();
+			int i = JOptionPane.showConfirmDialog(null,
+					"Group: '" + givenName +"' have some unread messages", "New Group Message",
+					JOptionPane.YES_OPTION);
+			if(i == -1 || i ==0)
+				notice = true;
+		}
+	}
+	
+	@Override
+	public synchronized void fileMSG(){
+		boolean isSender = false;
+		MessageMSG mmsg = (MessageMSG)msg;
+		//Get friend id
+		String userId = null;
+		if(mmsg.getSenderId().equals(user.getUserId())){
+			userId = mmsg.getReceiverId();
+			isSender = true;
+		}
+		else if(mmsg.getReceiverId().equals(user.getUserId())){
+			userId = mmsg.getSenderId();
+			isSender = false;
+		}
+		
+		//If this panel didn't selected or exist, Notice
+		JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+		ChatPanel cp = (ChatPanel) dto.getChatPanelList().get(userId);
+		if(cp == null){
+			cp =new ChatPanel(dto.getIdUser().get(userId),dto);
+			//Set groupId - chatPanel
+			dto.getChatPanelList().put(userId, cp);
+		}
+		cp.addMSG(mmsg.getSenderNickName(), mmsg.getTime(), mmsg.getText(),mmsg.getLink(), isSender);
+		int index = tab.indexOfComponent(cp);
+		if(index == tab.getSelectedIndex() && index != -1){
+			((ChatFrame)(dto.getFrameList().get("ChatFrame"))).setExtendedState(JFrame.NORMAL);
+			((ChatFrame)(dto.getFrameList().get("ChatFrame"))).setVisible(true);
+			return;
+		}
+		if(notice){
+			notice = false;
+			String givenName = dto.getIdUser().get(userId).getGivenName();
+			int i = JOptionPane.showConfirmDialog(null,
+					"Friend: '" + givenName +"' have some unread messages", "New Message",
+					JOptionPane.YES_OPTION);
+			if(i == -1 || i ==0)
+				notice = true;
+		}
 		
 	}
 	
 	@Override
-	public void textMSG(){
-		// TODO textMSG
+	public synchronized void groupFileMSG(){
+		boolean isSender = false;
+		MessageMSG mmsg = (MessageMSG)msg;
+		//Get group id
+		String groupId = mmsg.getReceiverId();
+		if(mmsg.getSenderId().equals(user.getUserId()))
+			isSender = true;
+		else 
+			isSender = false;
+		//If this panel didn't selected or exist, Notice
+		JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+		ChatPanel cp = (ChatPanel) dto.getChatPanelList().get("g"+groupId);
+		if(cp == null){
+			cp =new ChatPanel(dto.getIdGroup().get(groupId),dto);
+			//Set groupId - chatPanel
+			dto.getChatPanelList().put("g"+groupId, cp);
+		}
+		
+		cp.addMSG(mmsg.getSenderNickName(), mmsg.getTime(), mmsg.getText(),mmsg.getLink(), isSender);
+		int index = tab.indexOfComponent(cp);
+		if(index == tab.getSelectedIndex() && index != -1){
+			((ChatFrame)(dto.getFrameList().get("ChatFrame"))).setExtendedState(JFrame.NORMAL);
+			((ChatFrame)(dto.getFrameList().get("ChatFrame"))).setVisible(true);
+			return;
+		}
+		if(notice){
+			notice = false;
+			String givenName = dto.getIdGroup().get(groupId).getGivenName();
+			int i = JOptionPane.showConfirmDialog(null,
+					"Group: '" + givenName +"' have some unread messages", "New Group Message",
+					JOptionPane.YES_OPTION);
+			if(i == -1 || i ==0)
+				notice = true;
+		}
 		
 	}
 	
 	@Override
-	public void groupTextMSG(){
-		// TODO groupTextMSG
-		
-	}
-	
-	@Override
-	public void fileMSG(){
-		// TODO fileMSG
-		
-	}
-	
-	@Override
-	public void groupFileMSG(){
-		// TODO groupFileMSG
-		
+	public synchronized void getFile() {
+		FileMSG fmsg = (FileMSG)msg;
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("SAVE FILE");
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int returnVal = fileChooser.showDialog(null,"SAVE");
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File fi = fileChooser.getSelectedFile();
+			String filePath = fi.getAbsolutePath()+"\\"+fmsg.getFile().getName();
+			try {
+				ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath));
+				oos.writeObject(fmsg.getFile());
+				oos.flush();
+				oos.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
@@ -602,11 +794,12 @@ public class ClientService implements Service{
 		ChatPanel p = (ChatPanel) dto.getChatPanelList().get(user.getUserId());
 		if(p == null){
 			//if this id related panel do not exist, create a new one
-			p =new ChatPanel(null);
+			p =new ChatPanel(user,dto);
+			//Set userId - chatPanel
 			dto.getChatPanelList().put(user.getUserId(), p);
 		}
 		//ADD this panel into Chat Frame's tab panel
-		cf.addTabPanel(user.getGivenName(), p);			
+		cf.addTabPanel(user.getGivenName(), p);
 		//start Chat Frame
 		cf.setVisible(true);
 	}
@@ -619,11 +812,12 @@ public class ClientService implements Service{
 		ChatPanel p = (ChatPanel) dto.getChatPanelList().get("g"+group.getGroupId());
 		if(p == null){
 			//if this id related panel do not exist, create a new one
-			p =new ChatPanel(null);
+			p =new ChatPanel(group,dto);
+			//Set groupId - chatPanel
 			dto.getChatPanelList().put("g"+group.getGroupId(), p);
 		}
 		//ADD this panel into Chat Frame's tab panel
-		cf.addTabPanel(group.getGivenName(), p);
+		cf.addTabPanel("G:"+group.getGivenName(), p);
 		//start Chat Frame
 		cf.setVisible(true);
 	}
@@ -677,15 +871,27 @@ public class ClientService implements Service{
 		control.getDiskData().saveData(dd);
 	}
 	
-	
 	public MSG getMsg() {
 		return msg;
 	}
-	private void popFeedback(){
-		if(msg.getSenderId().equals("confirm"))
-			dto.getSc().sendMSG(new MSG("","refreshContactList"));
-		else JOptionPane.showMessageDialog(null, msg.getSenderId(),"error",
-				JOptionPane.ERROR_MESSAGE);		
+	
+	private void popFeedback(boolean flag){
+		if(msg.getSenderId().equals("Something wrong in accessing Database")||
+				msg.getSenderId().equals("You have already added this user/group"))
+			JOptionPane.showMessageDialog(null, msg.getSenderId(),"error",
+					JOptionPane.ERROR_MESSAGE);
+		else {
+				ChatPanel p = (ChatPanel) dto.getChatPanelList().get(msg.getSenderId());
+				JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+				int index = tab.getSelectedIndex();
+				dto.getSc().sendMSG(new MSG("","refreshContactList"));
+				int i = tab.indexOfComponent(p);
+				if(i == -1) return;
+				tab.remove(p);
+				if(flag)
+					tab.addTab(formattStr(((TextMSG)msg).getText()), p);
+				tab.setSelectedIndex(index);
+			}
 	}
 	//Unused methods
 	public void tipLabel() {}
@@ -718,5 +924,27 @@ public class ClientService implements Service{
 			}
 		}
 	}
-
+	private String formattStr(String str){
+		String s = str;
+		while(s.length() < 18)
+			s = ">"+s;
+		return s;
+	}
+	
+	public synchronized void inviteToGroupFrame() {
+		// TODO One of LAST TO IMPLEMENT
+		
+	}
+	
+	@Override
+	public synchronized void inviteToGroup(String groupId) {
+		// TODO One of LAST TO IMPLEMENT
+		
+	}
+	
+	@Override
+	public synchronized void deleteGroupMember() {
+		// TODO LAST LAST to implement
+		
+	}
 }

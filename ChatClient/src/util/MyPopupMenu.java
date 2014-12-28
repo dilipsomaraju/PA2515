@@ -7,6 +7,10 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
+
+import ui.ChatFrame;
+import ui.ChatPanel;
 
 import bean.Group;
 import bean.MSG;
@@ -105,12 +109,20 @@ public class MyPopupMenu extends JPopupMenu{
 			public synchronized void actionPerformed(ActionEvent e) {
 				dto.getControl().getClientService().chatFrame(user);
 				dto.getFrameList().get("ChatFrame").setExtendedState(JFrame.NORMAL);
+				ChatPanel p = (ChatPanel) dto.getChatPanelList().get(user.getUserId());
+				JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+				tab.setSelectedComponent(p);
 			}
 		});
 		
 		renameFriend.addActionListener(new ActionListener() {
 			public synchronized void actionPerformed(ActionEvent e) {
-				String givenName = JOptionPane.showInputDialog("Input new givenName");
+				String givenName = "";
+				while(givenName.equals("")){
+					givenName = JOptionPane.showInputDialog("Input the Group given name\n16 characters limited");
+					if(givenName.length() > 16)
+						givenName = "";
+				}
 				dto.getSc().sendMSG(new TextMSG(user.getUserId(), "renameFriend", null, givenName));
 			}
 		});
@@ -135,12 +147,20 @@ public class MyPopupMenu extends JPopupMenu{
 			public synchronized void actionPerformed(ActionEvent e) {
 				dto.getControl().getClientService().chatFrame(group);
 				dto.getFrameList().get("ChatFrame").setExtendedState(JFrame.NORMAL);
+				ChatPanel p = (ChatPanel) dto.getChatPanelList().get("g"+group.getGroupId());
+				JTabbedPane tab = ((ChatFrame)(dto.getFrameList().get("ChatFrame"))).getTabPanel();
+				tab.setSelectedComponent(p);
 			}
 		});
 		
 		renameGroup.addActionListener(new ActionListener() {
 			public synchronized void actionPerformed(ActionEvent e) {
-				String givenName = JOptionPane.showInputDialog("Input new givenName");
+				String givenName = "";
+				while(givenName.equals("")){
+					givenName = JOptionPane.showInputDialog("Input the Group given name\n16 characters limited");
+					if(givenName.length() > 16)
+						givenName = "";
+				}
 				dto.getSc().sendMSG(new TextMSG(group.getGroupId(), "renameGroup", null, givenName));
 			}
 		});
