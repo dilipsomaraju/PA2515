@@ -90,13 +90,14 @@ public class Control {
 			});
 			exit.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					tray.remove(trayIcon);
 					int i = JOptionPane.showConfirmDialog(null,
 							"Sure to close", "Warming",
 							JOptionPane.YES_NO_OPTION);
-					if(Math.abs(i) == 1)
-						return;
-					System.exit(0);
+					if(Math.abs(i) == 1);
+					else{
+						tray.remove(trayIcon);
+						System.exit(0);
+					}
 				}
 			});
 			pop.add(show);

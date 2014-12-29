@@ -4,8 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 import bean.ContactList;
@@ -26,8 +24,6 @@ public class ContactListDB {
 	private static String HAS_FRIEND_SQL = "select * from contactInfo where userId=? and userIds=?";
 	private static String HAS_GROUP_SQL = "select * from groupInfo where groupId=? and userIds=?";
 	private static String GET_GROUP_SQL = "select * from groupInfo where groupId=?";
-	private static String FIND_SQL = "select ? from ? where ? like '%?%'";
-	
 	
 	
 	/**
@@ -284,27 +280,22 @@ public class ContactListDB {
 	 * user Parameters to consist the Search SQL
 	 * @param clue Client input clue
 	 * @param tableName userInfo/groupInfo
-	 * @param id userId/groupId
-	 * @param type located attribute
+	 * @param attibute located attribute
 	 * @return id list 
 	 */
-	public static List<String> find(String id, String tableName, String attibute, String clue){
-		List<String> ids = new ArrayList<String>();
+	public static Vector<String> find(String tableName, String attirbute, String clue){
+		Vector<String> ids = new Vector<String>();
 		Connection conn = DB.getConn();
 		PreparedStatement stmt = null;
 		if(tableName.equals("groupInfo"))
-			stmt = DB.getStmt(conn,FIND_SQL);
+			stmt = DB.getStmt(conn,"SELECT * from "+tableName+" where "+ attirbute +" like '%"+clue+"%' group by groupId");
 		else if(tableName.equals("userInfo"))
-			stmt = DB.getStmt(conn, FIND_SQL+" and status='1'");
+			stmt = DB.getStmt(conn, "SELECT * from "+tableName+" where "+ attirbute +" like '%"+clue+"%' group by userId");
 		ResultSet rs = null;
 		try {
-			stmt.setString(1, id);
-			stmt.setString(2, tableName);
-			stmt.setString(3, attibute);
-			stmt.setString(4, clue);
 			rs = DB.getRs(stmt);
 			while(rs.next()){
-				ids.add(rs.getString(1));
+				ids.add(rs.getString(1)+"  ("+rs.getString("nickName")+")");
 			}
 			return ids;
 		} catch (SQLException e) {

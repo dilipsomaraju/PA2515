@@ -1,12 +1,14 @@
 package config;
 
+import java.io.Serializable;
+
 import org.dom4j.Element;
 
 /**
  * @author SuperSun
  * Configuration of Components
  */
-public class ComponentConfig {
+public class ComponentConfig implements Serializable{
 	private String className;
 	
 	private String path;

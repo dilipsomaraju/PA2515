@@ -37,8 +37,7 @@ public class FindFrame extends MyFrame{
 		idList = new MyList(14);
 		idList.setListData(list);
 		listPanel = new MyScrollPane(idList);
-		//TODO  set Bounds
-		listPanel.setBounds(25, 200, 225, 200);
+		listPanel.setBounds(15, 237, 216, 142);
 		panel.add(listPanel);
 		
 		idList.addMouseListener(new MouseAdapter() {

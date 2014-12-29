@@ -142,7 +142,7 @@ public class MyPopupMenu extends JPopupMenu{
 			this.add(sendGroupMessage);
 			this.add(renameGroup);
 			this.add(deleteGroup);
-			this.add(inviteFriends);
+//			this.add(inviteFriends);
 		sendGroupMessage.addActionListener(new ActionListener() {
 			public synchronized void actionPerformed(ActionEvent e) {
 				dto.getControl().getClientService().chatFrame(group);

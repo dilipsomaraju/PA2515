@@ -113,8 +113,7 @@ public class AuthenticationDB {
 	public static boolean checkLogin(String userId, String psw){
 		User user = getUser(userId);
 		if(user != null && user.getPsw().equals(psw) && user.getStatus() == 0){
-			//TODO
-//			setStatus(userId, 1);
+			setStatus(userId, 1);
 			return true;
 		}
 		return false;
@@ -189,7 +188,16 @@ public class AuthenticationDB {
 		}
 	}
 
-
+	/**
+	 * @param userId
+	 * @return userNickName
+	 */
+	public static String getUserNickName(String userId){
+		User user = getUser(userId);
+		if(user != null)
+			return user.getNickName();
+		return "";
+	}
 
 //	public static void main(String[] args) {
 //		System.out.println(isUser(""));

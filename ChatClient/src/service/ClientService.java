@@ -830,9 +830,14 @@ public class ClientService implements Service{
 	}
 	
 	public void saveUserName() {
-		if(saveUserName.isSelected())
+		if(saveUserName.isSelected()){
 			mode = "saveUserName";
-		else mode = "";
+			configSaveUserName.setSelected(true);
+		}
+		else{
+			mode = "";
+			configSaveUserName.setSelected(false);
+		}
 		dd.setMode(mode);
 	}
 	
@@ -841,9 +846,13 @@ public class ClientService implements Service{
 			mode = "autoLogin";
 			saveUserName.setSelected(true);
 			saveUserName.setEnabled(false);
+			configSaveUserName.setSelected(true);
+			configSaveUserName.setEnabled(false);
+			configAutoLogin.setSelected(true);
 		}
 		else{
 			saveUserName.setEnabled(true);
+			configSaveUserName.setEnabled(true);
 			mode = "saveUserName";
 		}
 		dd.setMode(mode);

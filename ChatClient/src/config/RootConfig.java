@@ -20,7 +20,7 @@ public class RootConfig {
 	 * When coding, IS_DEBUG = true;
 	 * When pubulished, IS_DEBUG = false;
 	 */
-	private static final boolean IS_DEBUG = true;
+	private static final boolean IS_DEBUG = false;
 	static {
 		try {
 			//The way to read configuration file when do debugging

@@ -1,5 +1,6 @@
 package config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import org.dom4j.Element;
  * @author SuperSun
  * Configuration of UI
  */
-public class UIConfig {
+public class UIConfig implements Serializable{
 	private List<FrameConfig> framesConfig;
 	
 	/**

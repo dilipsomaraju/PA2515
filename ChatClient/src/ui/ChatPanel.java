@@ -50,14 +50,12 @@ public class ChatPanel extends JPanel{
 		this.dto = dto;
 		this.setOpaque(false);
 		initPanel();
-		sendFriendTextMSG = new JButton("sendFriendTextMSG");
-		//TODO locattion, picture
+		sendFriendTextMSG = new JButton(Img.getImgIcon("chat/button1.jpg"));
 		this.add(sendFriendTextMSG);
-		sendFriendTextMSG.setBounds(340, 426, 200, 23);
+		sendFriendTextMSG.setBounds(436, 426, 105, 25);
 		
-		sendFriendFileMSG = new JButton("sendFriendFileMSG");
-		//TODO locattion, picture
-		sendFriendFileMSG.setBounds(3, 301, 200, 23);
+		sendFriendFileMSG = new JButton(Img.getImgIcon("chat/file.jpg"));
+		sendFriendFileMSG.setBounds(3, 301, 22, 20);
 		this.add(sendFriendFileMSG);
 		
 		//Send Text MSG to friend
@@ -102,13 +100,11 @@ public class ChatPanel extends JPanel{
 		this.dto = dto;
 		this.setOpaque(false);
 		initPanel();
-		sendGroupTextMSG = new JButton("sendGroupTextMSG");
-		//TODO locattion, picture
-		sendGroupTextMSG.setBounds(340, 426, 200, 23);
+		sendGroupTextMSG = new JButton(Img.getImgIcon("chat/button1.jpg"));
+		sendGroupTextMSG.setBounds(436, 426, 105, 25);
 		this.add(sendGroupTextMSG);
-		sendGroupFileMSG = new JButton("sendGroupFileMSG");
-		//TODO locattion, picture
-		sendGroupFileMSG.setBounds(3, 301, 200, 23);
+		sendGroupFileMSG = new JButton(Img.getImgIcon("chat/file.jpg"));
+		sendGroupFileMSG.setBounds(3, 301, 22, 20);
 		this.add(sendGroupFileMSG);
 		
 		sendGroupTextMSG.addActionListener(new ActionListener() {
@@ -157,7 +153,6 @@ public class ChatPanel extends JPanel{
 		showPanel = new MyScrollPane(textPanel, null);
 		inputPanel = new MyScrollPane(textArea, null);
 		this.setLayout(null);
-		//TODO set location
 		showPanel.setBounds(3,0,540,300);
 		inputPanel.setBounds(3,325,540,100);
 		this.add(showPanel);
